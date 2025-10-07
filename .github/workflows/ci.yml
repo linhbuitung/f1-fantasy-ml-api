@@ -27,9 +27,10 @@ jobs:
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
         run: |
-          echo "GCP_SA_KEY " > /tmp/gcloud-key.json
-          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcloud-key.json
-          # optional verify: gsutil ls gs://your-bucket || true
+          # write secret JSON to file (preserves newlines)
+          echo "$GCP_SA_KEY" > $GITHUB_WORKSPACE/gcloud-key.json
+          # expose to subsequent steps
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/gcloud-key.json" >> $GITHUB_ENV
 
       - name: DVC pull artifacts
         run: dvc pull
