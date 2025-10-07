@@ -293,6 +293,7 @@ def create_training_datasets(
         "final_race_duration",
         "additional_laps",
         "laps",
+        "final_position",
     ]
     cleaned = data_median.drop(columns=[c for c in cols_to_drop if c in data_median.columns], errors="ignore").copy()
 

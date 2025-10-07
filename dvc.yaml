@@ -1,0 +1,26 @@
+stages:
+  create_training:
+    cmd: python scripts/create_training.py
+    deps:
+      - app/preprocess/preprocess_mainrace.py
+      - app/preprocess/preprocess_general.py
+      - data/processed/countries.csv
+      - data/processed/races.csv
+      - data/raw/results.csv
+      - data/raw/qualifying.csv
+      - data/raw/drivers.csv
+      - data/raw/constructors.csv
+      - data/raw/circuits.csv
+      - data/raw/status.csv
+      - data/raw/lap_times.csv
+    outs:
+      - data/processed/cleaned_data_main_race_with_median.csv
+
+  train_model:
+    cmd: python scripts/train_mainrace_model.py
+    deps:
+      - scripts/train_mainrace_model.py
+      - app/model.py
+      - data/processed/cleaned_data_main_race_with_median.csv
+    outs:
+      - model/trained_pipeline.pkl
