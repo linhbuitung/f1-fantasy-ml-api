@@ -286,6 +286,17 @@ def build_driver_country_table(
     elif nat_col is None:
         df["driver_nationality"] = None
 
+    #   change value of certain nationalities to match countries.csv
+
+    df['driver_nationality'] = df['driver_nationality'].str.strip()
+    df['driver_nationality'] = df['driver_nationality'].replace(
+        {'Rhodesian': 'Zimbabwean',
+        'American-Italian': 'American',
+         'Argentine-Italian': 'Argentine',
+         'East German': 'German',
+         'West German': 'German',
+         'Argentinian' : 'Argentine',})
+
     countries = _load_countries_preferred(countries_path)
     merged = merge_country_codes(df, countries, left_on="driver_nationality", result_col="driver_nationality")
 
@@ -332,6 +343,15 @@ def build_constructor_country_table(
         df = df.rename(columns={nat_col: "constructor_nationality"})
     elif nat_col is None:
         df["constructor_nationality"] = None
+
+    df['constructor_nationality'] = df['constructor_nationality'].str.strip()
+    df['constructor_nationality'] = df['constructor_nationality'].replace(
+        {'Rhodesian': 'Zimbabwean',
+        'American-Italian': 'American',
+         'Argentine-Italian': 'Argentine',
+         'East German': 'German',
+         'West German': 'German',
+         'Argentinian' : 'Argentine',})
 
     countries = _load_countries_preferred(countries_path)
     merged = merge_country_codes(df, countries, left_on="constructor_nationality", result_col="constructor_nationality")

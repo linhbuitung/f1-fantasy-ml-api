@@ -59,10 +59,9 @@ def serve_mainrace_df(
                       'fastestLap', 'rank', 'fastestLapTime',
                       'fastestLapSpeed', 'statusId', 'qualifyId', 'number_qualifying',
                       'position_qualifying', 'q1', 'q2', 'q3', 'number_driver',
-                      'code', 'url_driver',
-                      'constructorRef',
-                      'url_constructor', 'circuitRef', 'location',
-                      'lat', 'lng', 'alt', 'url_circuit', 'lap', 'position_laptime', 'time'
+                      'code', 'url_driver', 'name_circuit', 'name_constructor',
+                      'url_constructor', 'location', 'lat', 'lng', 'alt', 'url_circuit', 'lap', 'position_laptime',
+                      'forename', 'surname', 'code','time'
                       ], axis=1)
 
     # rename/normalize columns used in notebook
@@ -76,12 +75,31 @@ def serve_mainrace_df(
         "country": "country_circuit",
         "type": "type_circuit",
         "dob": "driver_date_of_birth",
+        'circuitRef': 'circuit',
+        'constructorRef': 'constructor',
+        'driverRef': 'driver',
     }
     data = data.rename(columns={k: v for k, v in rename_map.items() if k in data.columns})
 
-    data['driver'] = data['driverRef']
-    # drop forename columns and surname columns
-    data = data.drop(['forename', 'surname', 'driverRef'], axis=1)
+    # replace certain nationalities to match countries.csv
+    data['constructor_nationality'] = data['constructor_nationality'].str.strip()
+    data['constructor_nationality'] = data['constructor_nationality'].replace(
+        {'Rhodesian': 'Zimbabwean',
+        'American-Italian': 'American',
+         'Argentine-Italian': 'Argentine',
+         'East German': 'German',
+         'West German': 'German',
+         'Argentinian' : 'Argentine',})
+
+    data['driver_nationality'] = data['driver_nationality'].str.strip()
+    data['driver_nationality'] = data['driver_nationality'].replace(
+        {'Rhodesian': 'Zimbabwean',
+        'American-Italian': 'American',
+         'Argentine-Italian': 'Argentine',
+         'East German': 'German',
+         'West German': 'German',
+         'Argentinian' : 'Argentine',})
+
 
     # driver DOB -> datetime
     if "driver_date_of_birth" in data.columns:
@@ -301,6 +319,9 @@ def create_training_datasets(
     if "max_laps" in cleaned.columns:
         cleaned = cleaned.rename(columns={"max_laps": "laps"})
 
+    # drop driverId/constructorId if present (not used in model)
+
+    cleaned = cleaned.drop(columns=["driverId", "constructorId"], errors="ignore")
     cleaned.to_csv(out_dir_path / "cleaned_data_main_race_with_median.csv", index=False)
 
     return data_median.reset_index(drop=True), cleaned.reset_index(drop=True)

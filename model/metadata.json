@@ -1,0 +1,6 @@
+{
+  "git_commit": "9f8ca18e3dd26220989f638cd897aa560b2eba98",
+  "n_rows": 3451,
+  "n_features": 17,
+  "target": "deviation_from_median"
+}

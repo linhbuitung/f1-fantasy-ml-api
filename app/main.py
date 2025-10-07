@@ -8,6 +8,7 @@ from app.preprocess.preprocess_mainrace import serve_mainrace_df, create_trainin
 races = load_races()
 countries = process_countries()
 drivers = build_driver_country_table()
+
 constructor = build_constructor_country_table()
 circuits = build_circuit_country_table()
 
