@@ -300,6 +300,6 @@ def create_training_datasets(
     if "max_laps" in cleaned.columns:
         cleaned = cleaned.rename(columns={"max_laps": "laps"})
 
-    cleaned.to_csv(out_dir_path / "cleaned_data_median.csv", index=False)
+    cleaned.to_csv(out_dir_path / "cleaned_data_main_race_with_median.csv", index=False)
 
     return data_median.reset_index(drop=True), cleaned.reset_index(drop=True)
