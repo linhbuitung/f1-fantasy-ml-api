@@ -2,4 +2,4 @@
     remote = myremote
     autostage = true
 ['remote "myremote"']
-    url = gs://ml.woof1.racing
+    url = gs://ml.woof1.racing/storage

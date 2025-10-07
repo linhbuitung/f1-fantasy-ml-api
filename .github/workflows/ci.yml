@@ -27,10 +27,11 @@ jobs:
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
         run: |
-          # write secret JSON to file (preserves newlines)
-          echo "$GCP_SA_KEY" > $GITHUB_WORKSPACE/gcloud-key.json
-          # expose to subsequent steps
-          echo "GOOGLE_APPLICATION_CREDENTIALS=$GITHUB_WORKSPACE/gcloud-key.json" >> $GITHUB_ENV
+          echo $GCP_SA_KEY > gcloud-key.json
+
+      - name: Modify DVC Remote
+        run: |
+          dvc remote modify - local myremote credentialpath gcloud-key.json
 
       - name: DVC pull artifacts
         run: dvc pull
