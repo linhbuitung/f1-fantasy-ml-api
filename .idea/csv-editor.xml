@@ -24,6 +24,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\data\processed\circuits.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\data\processed\cleaned_data_main_race_with_median.csv">
           <value>
             <Attribute>
@@ -38,7 +45,21 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\data\processed\constructors.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\data\processed\countries.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\processed\drivers.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

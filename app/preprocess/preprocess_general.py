@@ -242,7 +242,9 @@ def _load_countries_preferred(countries_path: str = "data/processed/countries.cs
 def build_driver_country_table(
     drivers_path: Optional[str] = None,
     countries_path: str = "data/processed/countries.csv",
-    save_to: str = "data/processed/unique_drivers.csv",
+    race_path: str = "data/raw/races.csv",
+    result_path: str = "data/raw/results.csv",
+    save_to: str = "data/processed/drivers.csv",
 ):
     """
     Build and persist unique driver table with alpha-3 nationality.
@@ -300,7 +302,39 @@ def build_driver_country_table(
     countries = _load_countries_preferred(countries_path)
     merged = merge_country_codes(df, countries, left_on="driver_nationality", result_col="driver_nationality")
 
-    out = merged[["driver", "driver_date_of_birth", "driver_nationality"]].drop_duplicates().reset_index(drop=True)
+    # User other dataset to get drivers first race date
+    project_root = Path(__file__).resolve().parents[2]
+    # Resolve drivers CSV
+
+    if race_path is None:
+        raw_race_path = project_root / "data" / "raw" / "races.csv"
+    else:
+        raw_race_path = Path(race_path)
+        if not raw_race_path.is_absolute():
+            raw_race_path = project_root / raw_race_path
+
+    races = pd.read_csv(Path(raw_race_path), dtype=str)
+
+    if result_path is None:
+        raw_result_path = project_root / "data" / "raw" / "results.csv"
+    else:
+        raw_result_path = Path(result_path)
+        if not raw_result_path.is_absolute():
+            raw_result_path = project_root / raw_result_path
+
+    results = pd.read_csv(Path(raw_result_path), dtype=str)
+    drivers = merged.copy()
+    df1 = pd.merge(races, results, how="left", on=["raceId"], suffixes=("_race", "_result"))
+    df2 = pd.merge(df1, drivers, how="left", on=["driverId"], suffixes=("", "_driver"))
+    first_race_dates = df2.groupby("driverId")["date"].min().reset_index()
+    first_race_dates = first_race_dates.rename(columns={"date": "first_race_date"})
+    data = df2.merge(first_race_dates, on="driverId", how="left")
+
+    # merge first race date into drivers
+    merged_drivers = pd.merge(merged, data, how="left", on=["driverId"], suffixes=("", "_y"))
+
+
+    out = merged_drivers[["driver","driverRef", "driver_date_of_birth", "driver_nationality", 'first_race_date']].drop_duplicates().reset_index(drop=True)
 
     if save_to:
         save_path = Path(save_to)
@@ -312,7 +346,7 @@ def build_driver_country_table(
 def build_constructor_country_table(
     constructors_path: Optional[str] = None,
     countries_path: str = "data/processed/countries.csv",
-    save_to: str = "data/processed/unique_constructors.csv",
+    save_to: str = "data/processed/constructors.csv",
 ):
     """
     Build and persist unique constructor table with alpha-3 nationality.
@@ -356,7 +390,7 @@ def build_constructor_country_table(
     countries = _load_countries_preferred(countries_path)
     merged = merge_country_codes(df, countries, left_on="constructor_nationality", result_col="constructor_nationality")
 
-    out = merged[["constructor", "constructor_nationality"]].drop_duplicates().reset_index(drop=True)
+    out = merged[["constructor", "constructorRef", "constructor_nationality"]].drop_duplicates().reset_index(drop=True)
 
     if save_to:
         save_path = Path(save_to)
@@ -368,7 +402,7 @@ def build_constructor_country_table(
 def build_circuit_country_table(
     circuits_path: Optional[str] = None,
     countries_path: str = "data/processed/countries.csv",
-    save_to: str = "data/processed/unique_circuits.csv",
+    save_to: str = "data/processed/circuits.csv",
 ):
     """
     Build and persist unique circuit table with alpha-3 nationality.
@@ -408,7 +442,7 @@ def build_circuit_country_table(
     countries = _load_countries_preferred(countries_path)
     merged = merge_country_codes(df, countries, left_on="country_circuit", right_on="en_short_name", result_col="circuit_nationality")
 
-    out = merged[["circuit", "type_circuit", "circuit_nationality"]].drop_duplicates().reset_index(drop=True)
+    out = merged[["circuit","circuitRef", "type_circuit", "circuit_nationality"]].drop_duplicates().reset_index(drop=True)
 
     if save_to:
         save_path = Path(save_to)
