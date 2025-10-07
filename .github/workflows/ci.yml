@@ -31,10 +31,10 @@ jobs:
 
       - name: Modify DVC Remote
         run: |
-          dvc remote modify - local myremote credentialpath gcloud-key.json
+          dvc remote modify --local myremote credentialpath gcloud-key.json
 
-      - name: DVC pull artifacts
-        run: dvc pull
+      - name: DVC pull data
+        run: dvc pull -v
 
       - name: Run tests
         run: pytest -q
