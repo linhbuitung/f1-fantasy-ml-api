@@ -2,7 +2,7 @@ from typing import Iterable, Optional, Sequence
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, RobustScaler
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 
 
 def build_mainrace_pipeline(
@@ -55,5 +55,5 @@ def build_mainrace_pipeline(
             min_samples_split=10,
             n_estimators=800)
 
-    pipeline = Pipeline([("preprocessing", preprocessor), ("model", model)])
+    pipeline = Pipeline([("preprocessing", preprocessor), ("models", model)])
     return pipeline

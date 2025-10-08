@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from app.preprocess import process_raw_weather, load_races
+from src.preprocess import process_raw_weather, load_races
 
 def _write_csv(path: Path, text: str):
     path.parent.mkdir(parents=True, exist_ok=True)

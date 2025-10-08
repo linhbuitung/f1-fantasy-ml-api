@@ -2,7 +2,14 @@ import os
 from pathlib import Path
 from typing import  List, Optional
 import pandas as pd
-from app.schemas import Race
+from src.schemas.dto import Race
+
+def build_all_general_processed_data():
+    load_races()
+    process_countries()
+    build_driver_country_table()
+    build_constructor_country_table()
+    build_circuit_country_table()
 
 def process_raw_weather(
     weather_path: Optional[str] = None,
@@ -30,7 +37,7 @@ def process_raw_weather(
     if not wp.is_absolute():
         wp = project_root / wp
 
-    dfw = pd.read_csv(str(wp), dtype=str)
+    dfw = pd.read_csv(str(wp))
 
     # # normalize date column
     # if date_col in dfw.columns:
@@ -85,7 +92,7 @@ def load_races(
         if not races_path.is_absolute():
             races_path = project_root / races_path
 
-    df = pd.read_csv(str(races_path), dtype=str)
+    df = pd.read_csv(str(races_path))
     if date_col in df.columns:
         df[date_col] = pd.to_datetime(df[date_col], format="%Y-%m-%d", errors="coerce").dt.date
 
@@ -160,7 +167,7 @@ def process_countries(
         if not countries_path.is_absolute():
             countries_path = project_root / countries_path
 
-    df = pd.read_csv(countries_path, dtype=str)
+    df = pd.read_csv(countries_path)
 
     # defensive defaults
     df['nationality'] = df.get('nationality', '').fillna('').astype(str)
@@ -233,7 +240,7 @@ def _load_countries_preferred(countries_path: str = "data/processed/countries.cs
         countries_file = project_root / countries_file
 
     if countries_file.exists():
-        countries = pd.read_csv(countries_file, dtype=str)
+        countries = pd.read_csv(countries_file)
     else:
         countries = process_countries(path=None)
 
@@ -264,7 +271,7 @@ def build_driver_country_table(
         if not raw_path.is_absolute():
             raw_path = project_root / raw_path
 
-    df = pd.read_csv(raw_path, dtype=str)
+    df = pd.read_csv(raw_path)
 
     # normalize to expected columns
     if "driver" not in df.columns:
@@ -313,7 +320,7 @@ def build_driver_country_table(
         if not raw_race_path.is_absolute():
             raw_race_path = project_root / raw_race_path
 
-    races = pd.read_csv(Path(raw_race_path), dtype=str)
+    races = pd.read_csv(Path(raw_race_path))
 
     if result_path is None:
         raw_result_path = project_root / "data" / "raw" / "results.csv"
@@ -322,7 +329,7 @@ def build_driver_country_table(
         if not raw_result_path.is_absolute():
             raw_result_path = project_root / raw_result_path
 
-    results = pd.read_csv(Path(raw_result_path), dtype=str)
+    results = pd.read_csv(Path(raw_result_path))
     drivers = merged.copy()
     df1 = pd.merge(races, results, how="left", on=["raceId"], suffixes=("_race", "_result"))
     df2 = pd.merge(df1, drivers, how="left", on=["driverId"], suffixes=("", "_driver"))
@@ -362,7 +369,7 @@ def build_constructor_country_table(
         if not raw_path.is_absolute():
             raw_path = project_root / raw_path
 
-    df = pd.read_csv(raw_path, dtype=str)
+    df = pd.read_csv(raw_path)
 
     if "constructor" not in df.columns:
         if "name" in df.columns:
@@ -418,7 +425,7 @@ def build_circuit_country_table(
         if not raw_path.is_absolute():
             raw_path = project_root / raw_path
 
-    df = pd.read_csv(raw_path, dtype=str)
+    df = pd.read_csv(raw_path)
 
     if "circuit" not in df.columns:
         if "name" in df.columns:

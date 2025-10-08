@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -6,13 +7,12 @@ from typing import Optional
 def serve_mainrace_df(
     raw_dir: Optional[str] = "data/raw",
     processed_dir: Optional[str] = "data/processed",
-    weather_path: Optional[str] = None,
     date_col: str = "date",
     year_from: int = 1981,
 ) -> pd.DataFrame:
     """
     Build the merged DataFrame used as input to
-    [`app.preprocess.create_training_datasets`](app/preprocess/preprocess_mainrace.py).
+    [`src.preprocess.create_training_datasets`](src/preprocess/preprocess_mainrace.py).
 
     - Loads raw CSVs from data/raw by default:
       data/raw/races.csv, results.csv, qualifying.csv, drivers.csv,
@@ -21,7 +21,7 @@ def serve_mainrace_df(
       races -> results -> qualifying -> drivers -> constructors -> circuits -> status -> laptimes
     - Normalizes race dates, driver DOB, computes race_year/month/day,
       age_at_gp_in_days, first_race_date, days_since_first_race.
-    - Merges weather (calls [`app.preprocess.process_raw_weather`](app/preprocess/preprocess_general.py) if weather_path not supplied)
+    - Merges weather (calls [`src.preprocess.process_raw_weather`](src/preprocess/preprocess_general.py) if weather_path not supplied)
     - Creates `rain` flag and returns the prepared DataFrame.
     """
     project_root = Path(__file__).resolve().parents[2]
@@ -29,16 +29,16 @@ def serve_mainrace_df(
     processed_base = Path(processed_dir) if processed_dir and Path(processed_dir).is_absolute() else (project_root / (processed_dir or "data" / "processed"))
 
     # load raw CSVs (fail early if missing)
-    races = pd.read_csv(processed_base / "races.csv", dtype=str)
-    results = pd.read_csv(raw_base / "results.csv", dtype=str)
-    qualifyings = pd.read_csv(raw_base / "qualifying.csv", dtype=str)
-    drivers = pd.read_csv(raw_base / "drivers.csv", dtype=str)
-    constructors = pd.read_csv(raw_base / "constructors.csv", dtype=str)
-    circuits = pd.read_csv(raw_base / "circuits.csv", dtype=str)
-    status = pd.read_csv(raw_base / "status.csv", dtype=str)
-    laptimes = pd.read_csv(raw_base / "lap_times.csv", dtype=str)
+    races = pd.read_csv(processed_base / "races.csv")
+    results = pd.read_csv(raw_base / "results.csv")
+    qualifyings = pd.read_csv(raw_base / "qualifying.csv")
+    drivers = pd.read_csv(raw_base / "drivers.csv")
+    constructors = pd.read_csv(raw_base / "constructors.csv")
+    circuits = pd.read_csv(raw_base / "circuits.csv")
+    status = pd.read_csv(raw_base / "status.csv")
+    laptimes = pd.read_csv(raw_base / "lap_times.csv")
 
-    countries = pd.read_csv(processed_base / "countries.csv", dtype=str)
+    countries = pd.read_csv(processed_base / "countries.csv")
 
     # Notebook merge order (same as Thesis.ipynb)
     df1 = pd.merge(races, results, how="left", on=["raceId"], suffixes=("_race", "_result"))
@@ -178,7 +178,7 @@ def serve_mainrace_df(
     data = data.drop_duplicates().reset_index(drop=True)
     return data
 
-def create_training_datasets(
+def create_mainrace_training_datasets(
     df: pd.DataFrame,
     out_dir: str = "data/processed",
     min_laps_threshold: int = 10,
@@ -258,8 +258,10 @@ def create_training_datasets(
 
     # 8) compute additional_laps and final_race_duration for finished or +N Lap statuses
     data_median["additional_laps"] = (data_median["max_laps"] - data_median["laps"]).abs().fillna(0)
+
     lap_pattern = r"\+.* Lap.*"
-    finished_mask = data_median.get("status").eq("Finished") | data_median.get("status", "").astype(str).str.match(lap_pattern)
+    finished_mask = data_median.get("status").eq("Finished") | data_median.get("status").astype(str).str.match(lap_pattern)
+
     # avoid division by zero
     data_median.loc[finished_mask & (data_median["laps"].fillna(0) != 0), "final_race_duration"] = (
         data_median["race_duration"]
@@ -269,29 +271,29 @@ def create_training_datasets(
 
     # 9) median per circuit/year/date and deviation
     if median_keys:
-        med = (
-            data_median.groupby(median_keys, as_index=False)
-            .agg(median_race_duration=("final_race_duration", "median"))
-        )
-        data_median = data_median.merge(med, on=median_keys, how="left")
-        data_median["deviation_from_median"] = data_median["final_race_duration"] - data_median["median_race_duration"]
+        data_median_race_duration = data_median.groupby(median_keys)[
+            'final_race_duration'].median().reset_index()
+        data_median_race_duration.rename(columns={'final_race_duration': 'median_race_duration'}, inplace=True)
+
+        data_median = data_median.merge(data_median_race_duration, on=median_keys, how="left")
+        data_median['deviation_from_median'] = data_median['final_race_duration'] - data_median['median_race_duration']
     else:
         data_median["median_race_duration"] = np.nan
         data_median["deviation_from_median"] = np.nan
 
     # 10) filter statuses like notebook and drop small races
     data_median = data_median[
-        data_median.get("status").eq("Finished") | data_median.get("status", "").astype(str).str.match(lap_pattern)
+        data_median.get("status").eq("Finished") | data_median.get("status").astype(str).str.match(lap_pattern)
     ].copy()
 
     # 11) round numeric columns
     num_cols = data_median.select_dtypes(include=[np.number]).columns
     data_median[num_cols] = data_median[num_cols].round()
 
+
     # 12) filter extreme deviations
     data_median = data_median[
-        (data_median["deviation_from_median"] > deviation_lower) & (data_median["deviation_from_median"] < deviation_upper)
-    ].copy()
+        (data_median['deviation_from_median'] > deviation_lower) & (data_median['deviation_from_median'] < deviation_upper)]
 
     # 13) final_position ranking per race for export (used later for evaluation)
     rank_keys = [k for k in ("race_year", "race_month", "race_day", "circuit") if k in data_median.columns]
@@ -319,7 +321,7 @@ def create_training_datasets(
     if "max_laps" in cleaned.columns:
         cleaned = cleaned.rename(columns={"max_laps": "laps"})
 
-    # drop driverId/constructorId if present (not used in model)
+    # drop driverId/constructorId if present (not used in models)
 
     cleaned = cleaned.drop(columns=["driverId", "constructorId"], errors="ignore")
     cleaned.to_csv(out_dir_path / "cleaned_data_main_race_with_median.csv", index=False)

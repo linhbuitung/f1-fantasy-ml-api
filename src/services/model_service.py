@@ -7,9 +7,9 @@ from typing import Dict, Iterable, List, Optional
 import joblib
 import pandas as pd
 
-MODEL_DIR = Path(os.environ.get("MODEL_DIR", "model"))
-MODEL_FILE = MODEL_DIR / "trained_pipeline.pkl"
-META_FILE = MODEL_DIR / "metadata.json"
+MODEL_DIR = Path(os.environ.get("MODEL_DIR", "models"))
+MAIN_RACE_MODEL_FILE = MODEL_DIR / "trained_mainrace_pipeline.pkl"
+MAIN_RACE_META_FILE = MODEL_DIR / "mainrace_metadata.json"
 
 
 def _git_commit_hash() -> Optional[str]:
@@ -23,17 +23,17 @@ def _git_commit_hash() -> Optional[str]:
 
 def load_model(path: Optional[Path] = None):
     """
-    Load model pipeline (joblib) and metadata. Returns (pipeline, metadata_dict).
+    Load models pipeline (joblib) and metadata. Returns (pipeline, metadata_dict).
     - path: optional path to .pkl file (overrides MODEL_FILE).
     """
-    p = Path(path) if path else MODEL_FILE
+    p = Path(path) if path else MAIN_RACE_MODEL_FILE
     if not p.exists():
         raise FileNotFoundError(f"Model not found: {p}")
     pipeline = joblib.load(p)
     meta = {}
-    if META_FILE.exists():
+    if MAIN_RACE_META_FILE.exists():
         try:
-            meta = json.loads(META_FILE.read_text())
+            meta = json.loads(MAIN_RACE_META_FILE.read_text())
         except Exception:
             meta = {}
     # attach runtime provenance if missing
@@ -64,9 +64,9 @@ def predict_record(record: Dict, pipeline=None, model_path: Optional[str] = None
 
 def save_metadata(extra: Dict, path: Optional[Path] = None):
     """
-    Save metadata JSON next to model. Called by training script.
+    Save metadata JSON next to models. Called by training script.
     """
-    p = Path(path) if path else META_FILE
+    p = Path(path) if path else MAIN_RACE_META_FILE
     p.parent.mkdir(parents=True, exist_ok=True)
     base = {"git_commit": _git_commit_hash()}
     base.update(extra or {})

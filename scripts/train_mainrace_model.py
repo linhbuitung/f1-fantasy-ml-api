@@ -5,8 +5,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.predict import save_metadata
-from app.model import build_mainrace_pipeline  # if you have a helper; adapt as needed
+from src.services.model_service import save_metadata
+from src.models.mainrace_pipeline import build_mainrace_pipeline  # if you have a helper; adapt as needed
 from pathlib import Path
 import pandas as pd
 
@@ -19,13 +19,13 @@ if __name__ == "__main__":
     X = Xy.drop(columns=["deviation_from_median"])
     pipeline = build_mainrace_pipeline()
     pipeline.fit(X, y)
-    Path("model").mkdir(exist_ok=True)
-    joblib.dump(pipeline, "model/trained_pipeline.pkl")
+    Path("models").mkdir(exist_ok=True)
+    joblib.dump(pipeline, "models/trained_mainrace_pipeline.pkl")
     # Save metadata: training time, dataset md5, sample params
     meta = {
         "n_rows": int(X.shape[0]),
         "n_features": int(X.shape[1]),
         "target": "deviation_from_median",
     }
-    save_metadata(meta, path=Path("model/metadata.json"))
-    print("Model saved: model/trained_pipeline.pkl")
+    save_metadata(meta, path=Path("models/mainrace_metadata.json"))
+    print("Model saved: models/trained_pipeline.pkl")

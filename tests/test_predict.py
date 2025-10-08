@@ -1,10 +1,10 @@
 from pathlib import Path
 import pandas as pd
-from app.predict import load_model, predict_df
+from src.services.model_service import load_model, predict_df
 
-def test_model_load_and_predict_smoke():
-    # CI should dvc pull model/trained_pipeline.pkl, or run a tiny local test model
-    model_path = Path("model/trained_pipeline.pkl")
+def test_mainrace_model_load_and_predict_smoke():
+    # CI should dvc pull models/trained_pipeline.pkl, or run a tiny local test models
+    model_path = Path("models/trained_mainrace_pipeline.pkl")
     assert model_path.exists(), "Model file missing (run dvc pull or train)"
     pipeline, meta = load_model()
     # construct a minimal DF using columns mentioned in research/Thesis.ipynb defaults

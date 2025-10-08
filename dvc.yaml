@@ -1,9 +1,28 @@
 stages:
-  create_training:
-    cmd: python scripts/create_training.py
+  create_general_processed_data:
+    cmd: python scripts/rebuild_processed_data.py
     deps:
-      - app/preprocess/preprocess_mainrace.py
-      - app/preprocess/preprocess_general.py
+      - src/preprocess/preprocess_general.py
+      - data/raw/results.csv
+      - data/raw/qualifying.csv
+      - data/raw/drivers.csv
+      - data/raw/constructors.csv
+      - data/raw/circuits.csv
+      - data/raw/status.csv
+      - data/raw/lap_times.csv
+    outs:
+      - data/processed/race_weather.csv
+      - data/processed/countries.csv
+      - data/processed/circuits.csv
+      - data/processed/constructors.csv
+      - data/processed/drivers.csv
+      - data/processed/races.csv
+
+  create_mainrace_training_data:
+    cmd: python scripts/create_mainrace_training.py
+    deps:
+      - src/preprocess/preprocess_mainrace.py
+      - src/preprocess/preprocess_general.py
       - data/processed/countries.csv
       - data/processed/races.csv
       - data/raw/results.csv
@@ -16,11 +35,11 @@ stages:
     outs:
       - data/processed/cleaned_data_main_race_with_median.csv
 
-  train_model:
+  train_mainrace_model:
     cmd: python scripts/train_mainrace_model.py
     deps:
       - scripts/train_mainrace_model.py
-      - app/model.py
+      - src/models/mainrace_pipeline.py
       - data/processed/cleaned_data_main_race_with_median.csv
     outs:
-      - model/trained_pipeline.pkl
+      - models/trained_mainrace_pipeline.pkl

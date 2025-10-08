@@ -2,7 +2,7 @@ from pathlib import Path
 import sys
 import json
 import pandas as pd
-from app.services.feature_builder import build_features_from_dto
+from src.services.feature_builder import build_features_from_dto
 
 def _write_csv(p: Path, content: str):
     p.parent.mkdir(parents=True, exist_ok=True)
