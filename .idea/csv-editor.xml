@@ -17,6 +17,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\data\processed\cleaned_data_qualifying_with_median.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\processed\cleaned_data_status.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\data\processed\constructors.csv">
           <value>
             <Attribute>
@@ -25,27 +39,6 @@
           </value>
         </entry>
         <entry key="\data\processed\countries.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\data\processed\data_median_after.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\data\processed\data_median_before.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\data\processed\data_median_before1.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

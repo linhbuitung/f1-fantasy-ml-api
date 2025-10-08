@@ -2,10 +2,10 @@ from typing import Iterable, Optional, Sequence
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, RobustScaler
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 
 
-def build_mainrace_pipeline(
+def build_status_pipeline(
     numeric_cols: Optional[Sequence[str]] = None,
     categorical_cols: Optional[Sequence[str]] = None,
     passthrough_cols: Optional[Sequence[str]] = None,
@@ -14,7 +14,7 @@ def build_mainrace_pipeline(
 
     # sensible defaults matching research/Thesis.ipynb
     if numeric_cols is None:
-        numeric_cols = ["qualification_position", "age_at_gp_in_days", "days_since_first_race", "laps"]
+        numeric_cols = ['qualification_position', 'age_at_gp_in_days', 'days_since_first_race']
     if categorical_cols is None:
         categorical_cols = [
             "constructor",
@@ -38,21 +38,21 @@ def build_mainrace_pipeline(
 
     est_lower = (estimator or "gbr").lower()
     if est_lower == "gbr":
-        model = GradientBoostingRegressor(
+        model = GradientBoostingClassifier(
             learning_rate=0.1,
             random_state=42,
-            loss='huber',
+            loss='log_loss',
             max_depth=5,
-            min_samples_leaf=4,
-            min_samples_split=5,
+            min_samples_leaf=5,
+            min_samples_split=15,
             n_estimators=400)
     else:
         # fallback
-        model = RandomForestRegressor(
+        model = RandomForestClassifier(
             random_state=42,
             n_jobs=-1,
             max_depth=30,
-            min_samples_leaf=2,
+            min_samples_leaf=4,
             min_samples_split=10,
             n_estimators=800)
 

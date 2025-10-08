@@ -5,7 +5,7 @@ from sklearn.preprocessing import OneHotEncoder, RobustScaler
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 
 
-def build_mainrace_pipeline(
+def build_qualifying_pipeline(
     numeric_cols: Optional[Sequence[str]] = None,
     categorical_cols: Optional[Sequence[str]] = None,
     passthrough_cols: Optional[Sequence[str]] = None,
@@ -14,7 +14,7 @@ def build_mainrace_pipeline(
 
     # sensible defaults matching research/Thesis.ipynb
     if numeric_cols is None:
-        numeric_cols = ["qualification_position", "age_at_gp_in_days", "days_since_first_race", "laps"]
+        numeric_cols = ["age_at_gp_in_days", "days_since_first_race"]
     if categorical_cols is None:
         categorical_cols = [
             "constructor",
@@ -26,7 +26,7 @@ def build_mainrace_pipeline(
             "constructor_nationality",
         ]
     if passthrough_cols is None:
-        passthrough_cols = ["race_year", "race_month", "race_day", "rain", "driver_home", "constructor_home"]
+        passthrough_cols = ["race_year", "race_month", "race_day", "driver_home", "constructor_home"]
 
     preprocessor = ColumnTransformer(
         transformers=[
