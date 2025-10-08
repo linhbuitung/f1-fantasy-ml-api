@@ -5,11 +5,8 @@ from app.api.routers import predict_mainrace, predict_qualifying, predict_status
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from app.preprocess.preprocess_qualifying import serve_qualifying_df
-
 load_dotenv()
 
-serve_qualifying_df()
 APP_MODE: str = os.getenv("APP_MODE", "dev")
 API_KEY: str = os.getenv("API_KEY")
 if(API_KEY is None or API_KEY == ""):
