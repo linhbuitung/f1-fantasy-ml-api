@@ -2,4 +2,5 @@ build:
   docker:
     web: Dockerfile
 release:
-  web: bash app/scripts/release.sh
+  command: bash app/scripts/release.sh
+  image: web
