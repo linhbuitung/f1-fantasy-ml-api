@@ -2,7 +2,7 @@ from pathlib import Path
 import sys
 import json
 import pandas as pd
-from src.services.feature_builder import build_features_from_dto
+from src.services.feature_builder import build_main_race_features_from_dto
 
 def _write_csv(p: Path, content: str):
     p.parent.mkdir(parents=True, exist_ok=True)
@@ -53,7 +53,7 @@ def test_build_features_from_dto_minimal(tmp_path, monkeypatch):
     }
 
     # act
-    features = build_features_from_dto(dto)
+    features = build_main_race_features_from_dto(dto)
 
     # assert presence of core keys
     expected_keys = {
