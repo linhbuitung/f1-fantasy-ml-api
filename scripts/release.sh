@@ -3,6 +3,9 @@
 # Write GCP credentials to file
 echo "$GCP_SA_KEY" > gcloud-key.json
 
+# Tell DVC to skip Git
+dvc config core.no_scm true
+
 # Configure DVC to use the credentials
 dvc remote modify --local myremote credentialpath gcloud-key.json
 

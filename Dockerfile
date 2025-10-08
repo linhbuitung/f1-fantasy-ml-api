@@ -8,6 +8,7 @@ COPY ./app /app/app
 COPY ./models /app/models
 COPY ./data /app/data
 COPY ./scripts /app/scripts
-COPY dvc.yaml /app
-COPY dvc.lock /app
-COPY .dvc/config /app/.dvc/config
+
+COPY .dvc /app/.dvc
+COPY dvc.yaml /app/dvc.yaml
+COPY dvc.lock /app/dvc.lock
