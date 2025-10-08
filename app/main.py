@@ -10,7 +10,6 @@ from app.preprocess.preprocess_qualifying import serve_qualifying_df
 load_dotenv()
 
 serve_qualifying_df()
-ALLOWED_ORIGINS: list = json.loads(os.getenv("ALLOWED_ORIGINS"))
 APP_MODE: str = os.getenv("APP_MODE", "dev")
 API_KEY: str = os.getenv("API_KEY")
 if(API_KEY is None or API_KEY == ""):
@@ -33,7 +32,7 @@ app = create_app()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
