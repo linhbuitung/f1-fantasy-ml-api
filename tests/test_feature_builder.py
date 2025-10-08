@@ -18,8 +18,8 @@ def test_build_features_from_dto_minimal(tmp_path, monkeypatch):
 
     # drivers.csv with driverRef, nationality and dob
     drivers_csv = data_proc / "drivers.csv"
-    drivers_content = "driverId,driverRef,forename,surname,driver_date_of_birth,first_race_date,nationality\n"
-    drivers_content += "1,hamilton,Lewis,Hamilton,1985-01-07,2007-03-18,GBR\n"
+    drivers_content = "driver,driverRef,driver_date_of_birth,first_race_date,driver_nationality\n"
+    drivers_content += "1,hamilton,1985-01-07,2007-03-18,GBR\n"
     _write_csv(drivers_csv, drivers_content)
 
     # constructors.csv
