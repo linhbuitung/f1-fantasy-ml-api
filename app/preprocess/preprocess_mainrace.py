@@ -12,7 +12,7 @@ def serve_mainrace_df(
 ) -> pd.DataFrame:
     """
     Build the merged DataFrame used as input to
-    [`src.preprocess.create_training_datasets`](src/preprocess/preprocess_mainrace.py).
+    [`app.preprocess.create_training_datasets`](app/preprocess/preprocess_mainrace.py).
 
     - Loads raw CSVs from data/raw by default:
       data/raw/races.csv, results.csv, qualifying.csv, drivers.csv,
@@ -21,7 +21,7 @@ def serve_mainrace_df(
       races -> results -> qualifying -> drivers -> constructors -> circuits -> status -> laptimes
     - Normalizes race dates, driver DOB, computes race_year/month/day,
       age_at_gp_in_days, first_race_date, days_since_first_race.
-    - Merges weather (calls [`src.preprocess.process_raw_weather`](src/preprocess/preprocess_general.py) if weather_path not supplied)
+    - Merges weather (calls [`app.preprocess.process_raw_weather`](app/preprocess/preprocess_general.py) if weather_path not supplied)
     - Creates `rain` flag and returns the prepared DataFrame.
     """
     project_root = Path(__file__).resolve().parents[2]

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from src.services.model_service import predict_batch_and_rank
+from app.services.model_service import predict_batch_and_rank
 
 class FakePipeline:
     """Deterministic fake pipeline: returns qualification_position as prediction if present."""

@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import  List, Optional
 import pandas as pd
-from src.schemas.dto import Race
+from app.schemas.dto import Race
 
 def build_all_general_processed_data():
     load_races()

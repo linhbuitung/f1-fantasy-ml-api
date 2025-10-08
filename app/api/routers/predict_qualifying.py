@@ -3,9 +3,9 @@ from pathlib import Path
 from typing import List
 
 from fastapi import APIRouter
-from src.schemas.dto import QualifyingPredictInput, QualifyingPredictionItem, QualifyingPredictResponse
-from src.services.feature_builder import build_qualifying_features_from_dto
-from src.services.model_service import load_model, predict_df, predict_batch_and_rank
+from app.schemas.dto import QualifyingPredictInput, QualifyingPredictionItem, QualifyingPredictResponse
+from app.services.feature_builder import build_qualifying_features_from_dto
+from app.services.model_service import load_model, predict_df, predict_batch_and_rank
 import pandas as pd
 
 router = APIRouter(prefix="/qualifying", tags=["Predict Qualifying"])
@@ -52,7 +52,7 @@ def predict_batch(reqs: List[QualifyingPredictInput]):
     df = pd.DataFrame(features_list)
 
     # 3) predict + rank
-    df_preds, meta = predict_batch_and_rank(df, model_path="models/trained_qualifying_pipeline.pkl")  # symbol: src.services.model_service.predict_batch_and_rank
+    df_preds, meta = predict_batch_and_rank(df, model_path="models/trained_qualifying_pipeline.pkl")  # symbol: app.services.model_service.predict_batch_and_rank
     # 4) build response items preserving original inputs
     items = []
     for inp, feats, (_, row) in zip(inputs, features_list, df_preds.iterrows()):

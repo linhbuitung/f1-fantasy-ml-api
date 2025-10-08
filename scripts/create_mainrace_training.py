@@ -5,7 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from src.preprocess.preprocess_mainrace import serve_mainrace_df, create_mainrace_training_datasets
+from app.preprocess.preprocess_mainrace import serve_mainrace_df, create_mainrace_training_datasets
 from pathlib import Path
 
 if __name__ == "__main__":

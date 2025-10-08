@@ -2,7 +2,7 @@ stages:
   create_general_processed_data:
     cmd: python scripts/rebuild_processed_data.py
     deps:
-      - src/preprocess/preprocess_general.py
+      - app/preprocess/preprocess_general.py
       - data/raw/results.csv
       - data/raw/qualifying.csv
       - data/raw/drivers.csv
@@ -21,8 +21,8 @@ stages:
   create_mainrace_training_data:
     cmd: python scripts/create_mainrace_training.py
     deps:
-      - src/preprocess/preprocess_mainrace.py
-      - src/preprocess/preprocess_general.py
+      - app/preprocess/preprocess_mainrace.py
+      - app/preprocess/preprocess_general.py
       - data/processed/countries.csv
       - data/processed/races.csv
       - data/raw/results.csv
@@ -38,8 +38,8 @@ stages:
   create_qualifying_training_data:
     cmd: python scripts/create_qualifying_training.py
     deps:
-      - src/preprocess/preprocess_qualifying.py
-      - src/preprocess/preprocess_general.py
+      - app/preprocess/preprocess_qualifying.py
+      - app/preprocess/preprocess_general.py
       - data/processed/countries.csv
       - data/processed/races.csv
       - data/raw/results.csv
@@ -55,8 +55,8 @@ stages:
   create_status_training_data:
     cmd: python scripts/create_status_training.py
     deps:
-      - src/preprocess/preprocess_status.py
-      - src/preprocess/preprocess_general.py
+      - app/preprocess/preprocess_status.py
+      - app/preprocess/preprocess_general.py
       - data/processed/countries.csv
       - data/processed/races.csv
       - data/raw/results.csv
@@ -73,7 +73,7 @@ stages:
     cmd: python scripts/train_mainrace_model.py
     deps:
       - scripts/train_mainrace_model.py
-      - src/models/mainrace_pipeline.py
+      - app/models/mainrace_pipeline.py
       - data/processed/cleaned_data_main_race_with_median.csv
     outs:
       - models/trained_mainrace_pipeline.pkl
@@ -82,7 +82,7 @@ stages:
     cmd: python scripts/train_qualifying_model.py
     deps:
       - scripts/train_qualifying_model.py
-      - src/models/qualifying_pipeline.py
+      - app/models/qualifying_pipeline.py
       - data/processed/cleaned_data_qualifying_with_median.csv
     outs:
       - models/trained_qualifying_pipeline.pkl
@@ -91,7 +91,7 @@ stages:
     cmd: python scripts/train_status_model.py
     deps:
       - scripts/train_status_model.py
-      - src/models/status_pipeline.py
+      - app/models/status_pipeline.py
       - data/processed/cleaned_data_status.csv
     outs:
       - models/trained_status_pipeline.pkl

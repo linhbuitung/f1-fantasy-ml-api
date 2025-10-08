@@ -1,11 +1,11 @@
 import json
 import os
 from fastapi import FastAPI, Request, HTTPException
-from src.api.routers import predict_mainrace, predict_qualifying, predict_status
+from app.api.routers import predict_mainrace, predict_qualifying, predict_status
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from src.preprocess.preprocess_qualifying import serve_qualifying_df
+from app.preprocess.preprocess_qualifying import serve_qualifying_df
 
 load_dotenv()
 

@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from src.services.model_service import load_model, predict_df, get_proba_df
+from app.services.model_service import load_model, predict_df, get_proba_df
 
 def test_mainrace_model_load_and_predict_smoke():
     # CI should dvc pull models/trained_pipeline.pkl, or run a tiny local test models

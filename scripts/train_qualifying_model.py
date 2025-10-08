@@ -5,8 +5,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from src.services.model_service import save_metadata
-from src.models.qualifying_pipeline import build_qualifying_pipeline  # if you have a helper; adapt as needed
+from app.services.model_service import save_metadata
+from app.models.qualifying_pipeline import build_qualifying_pipeline  # if you have a helper; adapt as needed
 from pathlib import Path
 import pandas as pd
 

@@ -5,7 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from src.preprocess.preprocess_status import serve_status_df, create_status_training_datasets
+from app.preprocess.preprocess_status import serve_status_df, create_status_training_datasets
 from pathlib import Path
 
 if __name__ == "__main__":

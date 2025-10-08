@@ -3,9 +3,9 @@ from pathlib import Path
 from typing import List
 
 from fastapi import APIRouter
-from src.schemas.dto import StatusPredictInput, StatusPredictionItem, StatusPredictResponse
-from src.services.feature_builder import build_status_features_from_dto
-from src.services.model_service import load_model, get_proba_df, get_batch_proba
+from app.schemas.dto import StatusPredictInput, StatusPredictionItem, StatusPredictResponse
+from app.services.feature_builder import build_status_features_from_dto
+from app.services.model_service import load_model, get_proba_df, get_batch_proba
 import pandas as pd
 
 router = APIRouter(prefix="/status", tags=["Predict Status"])
@@ -51,7 +51,7 @@ def predict_batch(reqs: List[StatusPredictInput]):
     df = pd.DataFrame(features_list)
 
     # 3) predict + rank
-    df_preds, meta = get_batch_proba(df, model_path="models/trained_status_pipeline.pkl")  # symbol: src.services.model_service.predict_batch_and_rank
+    df_preds, meta = get_batch_proba(df, model_path="models/trained_status_pipeline.pkl")  # symbol: app.services.model_service.predict_batch_and_rank
     # 4) build response items preserving original inputs
     items = []
     for inp, feats, (_, row) in zip(inputs, features_list, df_preds.iterrows()):
