@@ -1,0 +1,5 @@
+outs:
+- md5: 9c6e8e7779ebc3bf808f75ae72166bc1
+  size: 8547
+  hash: md5
+  path: countries.csv

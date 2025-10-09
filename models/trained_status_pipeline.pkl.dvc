@@ -1,0 +1,5 @@
+outs:
+- md5: b86581d10f1dec5497f35fa76172acf4
+  size: 1108582
+  hash: md5
+  path: trained_status_pipeline.pkl

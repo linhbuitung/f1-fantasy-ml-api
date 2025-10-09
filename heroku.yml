@@ -3,5 +3,5 @@ build:
     web: Dockerfile
 release:
   command:
-    - bash /app/scripts/release.sh
+    - bash /app/scripts/pipeline.sh
   image: web

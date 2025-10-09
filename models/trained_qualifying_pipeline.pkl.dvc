@@ -1,0 +1,5 @@
+outs:
+- md5: b485e1c127df1d52abb0a60e76ef8ac0
+  size: 1167622
+  hash: md5
+  path: trained_qualifying_pipeline.pkl

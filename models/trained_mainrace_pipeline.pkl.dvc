@@ -1,0 +1,5 @@
+outs:
+- md5: 8d8274655cf63aa8870e47d1323d08f4
+  size: 1187878
+  hash: md5
+  path: trained_mainrace_pipeline.pkl

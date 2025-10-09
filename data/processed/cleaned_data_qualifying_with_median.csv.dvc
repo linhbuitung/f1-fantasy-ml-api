@@ -1,0 +1,5 @@
+outs:
+- md5: 4c8295e102a479caec2d940fd6c8633b
+  size: 303107
+  hash: md5
+  path: cleaned_data_qualifying_with_median.csv

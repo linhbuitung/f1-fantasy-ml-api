@@ -1,0 +1,5 @@
+outs:
+- md5: f3aec879ecdcdc71bdb9d16d6829ef07
+  size: 4843
+  hash: md5
+  path: constructors.csv

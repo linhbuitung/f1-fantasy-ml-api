@@ -5,12 +5,15 @@ from app.api.routers import predict_mainrace, predict_qualifying, predict_status
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-load_dotenv()
 
+
+# APP_MODE controls whether docs/openapi are exposed. Default to dev for local runs.
 APP_MODE: str = os.getenv("APP_MODE", "dev")
-API_KEY: str = os.getenv("API_KEY")
-if(API_KEY is None or API_KEY == ""):
-    raise ValueError("API_KEY environment variable must be set")
+# API_KEY is optional at import time to allow local/dev runs. Middleware will enforce it only if set.
+API_KEY: str | None = os.getenv("API_KEY")
+
+if APP_MODE == "dev":
+    load_dotenv()
 
 def create_app() -> FastAPI:
     docs_url = None if APP_MODE == "prod" else "/docs"  # disables docs
@@ -21,11 +24,14 @@ def create_app() -> FastAPI:
     created_app.include_router(predict_mainrace.router, prefix="/api")
     created_app.include_router(predict_qualifying.router, prefix="/api")
     created_app.include_router(predict_status.router, prefix="/api")
+
+    # lightweight health endpoint that does not require an API key
+    @created_app.get("/_health", include_in_schema=False)
+    def _health():
+        return {"status": "ok"}
     return created_app
 
 app = create_app()
-
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,8 +41,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.middleware("http")
 async def verify_api_key(request: Request, call_next):
-    if  request.headers.get("X-API-Key") is None or request.headers.get("X-API-Key") != API_KEY:
-        raise HTTPException(status_code=403, detail="Forbidden")
+    # let health endpoint through without API key
+    if request.url.path == "/_health":
+        return await call_next(request)
+
+    # If API_KEY is set in environment, require matching header. If not set, allow requests (useful for dev).
+    if API_KEY:
+        header = request.headers.get("X-API-Key") or request.headers.get("x-api-key")
+        if not header or header != API_KEY:
+            raise HTTPException(status_code=401, detail="Missing or invalid API key")
     return await call_next(request)
