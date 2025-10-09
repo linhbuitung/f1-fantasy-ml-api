@@ -29,7 +29,5 @@ RUN if [ -n "$GCP_SA_KEY_B64" ]; then \
       echo "GCP_SA_KEY_B64 not provided; skipping dvc pull at build time"; \
     fi
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
-
 # log that the url is http://localhost:8000/docs
-RUN echo "Application will be available at http://localhost:8080/docs"
+CMD echo "Application will be available at http://localhost:8080/docs" && uvicorn app.main:app --host 0.0.0.0 --port 8080
