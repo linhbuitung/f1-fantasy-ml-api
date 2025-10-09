@@ -1,12 +1,12 @@
-import json
+import uvicorn
 import os
 from fastapi import FastAPI, Request, HTTPException
 from app.api.routers import predict_mainrace, predict_qualifying, predict_status
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+from app.utils import dvc_pull_with_gcp_key
 
-
-
+dvc_pull_with_gcp_key()
 # APP_MODE controls whether docs/openapi are exposed. Default to dev for local runs.
 APP_MODE: str = os.getenv("APP_MODE", "dev")
 # API_KEY is optional at import time to allow local/dev runs. Middleware will enforce it only if set.
@@ -54,3 +54,7 @@ async def verify_api_key(request: Request, call_next):
         if not header or header != API_KEY:
             raise HTTPException(status_code=401, detail="Missing or invalid API key")
     return await call_next(request)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
