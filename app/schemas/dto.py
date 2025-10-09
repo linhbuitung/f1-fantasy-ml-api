@@ -59,6 +59,7 @@ class StatusPredictInput(BaseModel):
     circuit: str
     driver: str
     race_date: date
+    rain: Optional[int] = 0
 
 # Replace per-record prediction item with aggregate result per race
 class StatusPredictionItem(BaseModel):
