@@ -16,4 +16,4 @@ COPY ./scripts /app/scripts
 COPY .dvc /app/.dvc
 COPY dvc.lock /app/dvc.lock
 
-CMD ["python", "main.py"]
+CMD ["python", "-m" , "app.main"]
