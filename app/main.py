@@ -21,12 +21,12 @@ def create_app() -> FastAPI:
     openapi_url = None if APP_MODE == "prod" else "/openapi.json"  # disables openapi.json suggested by tobias comment.
     created_app = FastAPI(title="f1-fantasy-ml-api",docs_url=docs_url, redoc_url=redoc_url, openapi_url=openapi_url)
 
-    created_app.include_router(predict_mainrace.router, prefix="/api")
-    created_app.include_router(predict_qualifying.router, prefix="/api")
-    created_app.include_router(predict_status.router, prefix="/api")
+    created_app.include_router(predict_mainrace.router)
+    created_app.include_router(predict_qualifying.router)
+    created_app.include_router(predict_status.router)
 
     # lightweight health endpoint that does not require an API key
-    @created_app.get("/_health", include_in_schema=False)
+    @created_app.get("/health", include_in_schema=False)
     def _health():
         return {"status": "ok"}
     return created_app
@@ -49,8 +49,8 @@ async def verify_api_key(request: Request, call_next):
         return await call_next(request)
 
     # If API_KEY is set in environment, require matching header. If not set, allow requests (useful for dev).
-    if API_KEY:
-        header = request.headers.get("X-API-Key") or request.headers.get("x-api-key")
+    if APP_MODE == "prod" and API_KEY:
+        header = request.headers.get("Ml-API-Key") or request.headers.get("ml-api-key")
         if not header or header != API_KEY:
             raise HTTPException(status_code=401, detail="Missing or invalid API key")
     return await call_next(request)

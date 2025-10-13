@@ -23,7 +23,7 @@ def predict(req: MainRacePredictInput):
 
     # 3) predict
     df = pd.DataFrame([features])
-    pipeline, meta = load_model(path=Path("models/trained_mainrace_pipeline.pkl"))
+    pipeline, meta = load_model(path="trained_mainrace_pipeline.pkl", meta_path="mainrace_metadata.json")
     predictions = predict_df(df, pipeline=pipeline)
 
     # 4) build response item(s)
@@ -52,7 +52,7 @@ def predict_batch(reqs: List[MainRacePredictInput]):
     df = pd.DataFrame(features_list)
 
     # 3) predict + rank
-    df_preds, meta = predict_batch_and_rank(df)  # symbol: app.services.model_service.predict_batch_and_rank
+    df_preds, meta = predict_batch_and_rank(df, model_path="trained_mainrace_pipeline.pkl", meta_path="mainrace_metadata.json")  # symbol: app.services.model_service.predict_batch_and_rank
     # 4) build response items preserving original inputs
     items = []
     for inp, feats, (_, row) in zip(inputs, features_list, df_preds.iterrows()):

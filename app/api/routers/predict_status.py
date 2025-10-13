@@ -23,7 +23,7 @@ def predict(req: StatusPredictInput):
 
     # 3) predict
     df = pd.DataFrame([features])
-    pipeline, meta = load_model(path=Path("models/trained_status_pipeline.pkl"))
+    pipeline, meta = load_model(path="trained_status_pipeline.pkl", meta_path="status_metadata.json")
     predictions = get_proba_df(df, pipeline=pipeline)
 
     # 4) build response item(s)
@@ -51,7 +51,7 @@ def predict_batch(reqs: List[StatusPredictInput]):
     df = pd.DataFrame(features_list)
 
     # 3) predict + rank
-    df_preds, meta = get_batch_proba(df, model_path="models/trained_status_pipeline.pkl")  # symbol: app.services.model_service.predict_batch_and_rank
+    df_preds, meta = get_batch_proba(df, model_path="trained_status_pipeline.pkl",  meta_path="status_metadata.json")  # symbol: app.services.model_service.predict_batch_and_rank
     # 4) build response items preserving original inputs
     items = []
     for inp, feats, (_, row) in zip(inputs, features_list, df_preds.iterrows()):
@@ -59,7 +59,7 @@ def predict_batch(reqs: List[StatusPredictInput]):
             StatusPredictionItem(
                 input=inp,
                 features=feats,
-                dnf_percentage=float(row["predicted_dnf"]),
+                dnf_percentage=float(row["predicted_proba"]),
             )
         )
 

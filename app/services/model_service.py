@@ -8,7 +8,8 @@ import joblib
 import pandas as pd
 import numpy as np
 
-MODEL_DIR = Path(os.environ.get("MODEL_DIR", "models"))
+project_root = Path(__file__).resolve().parents[2]  # repo root (.. / .. from this file)
+MODEL_DIR = Path(os.environ.get("MODEL_DIR", str(project_root / "models")))
 MAIN_RACE_MODEL_FILE = MODEL_DIR / "trained_mainrace_pipeline.pkl"
 MAIN_RACE_META_FILE = MODEL_DIR / "mainrace_metadata.json"
 QUALIFYING_MODEL_FILE = MODEL_DIR / "trained_qualifying_pipeline.pkl"
@@ -23,21 +24,20 @@ def _git_commit_hash() -> Optional[str]:
         return None
 
 
-def load_model(path: Optional[Path] = None):
+def load_model(path: Optional[str] = None, meta_path: Optional[str] = None) -> tuple:
     """
     Load models pipeline (joblib) and metadata. Returns (pipeline, metadata_dict).
     - path: optional path to .pkl file (overrides MODEL_FILE).
     """
-    p = Path(path) if path else MAIN_RACE_MODEL_FILE
+    p = MODEL_DIR / path
     if not p.exists():
         raise FileNotFoundError(f"Model not found: {p}")
     pipeline = joblib.load(p)
-    meta = {}
-    if MAIN_RACE_META_FILE.exists():
-        try:
-            meta = json.loads(MAIN_RACE_META_FILE.read_text())
-        except Exception:
-            meta = {}
+
+    p_meta = MODEL_DIR / meta_path
+    if not p_meta.exists():
+        raise FileNotFoundError(f"Meta not found: {p}")
+    meta = json.loads(p_meta.read_text())
     # attach runtime provenance if missing
     meta.setdefault("git_commit", _git_commit_hash())
     return pipeline, meta
@@ -96,6 +96,7 @@ def predict_batch_and_rank(
     df: pd.DataFrame,
     pipeline=None,
     model_path: Optional[str] = None,
+    meta_path: Optional[str] = None,
     rank_keys: Optional[list] = None,
 ) -> tuple[pd.DataFrame, Dict]:
     """
@@ -107,9 +108,9 @@ def predict_batch_and_rank(
     Returns (df_out, meta) where df_out contains 'predicted_deviation_from_median' and 'predicted_final_position'.
     """
     if pipeline is None:
-        pipeline, meta = load_model(model_path)
+        pipeline, meta = load_model(path= model_path, meta_path=meta_path)
     else:
-        _, meta = load_model(model_path) if model_path else ({}, {})  # ensure meta loaded when requested
+        _, meta = load_model(path=model_path, meta_path=meta_path) if model_path else ({}, {})  # ensure meta loaded when requested
     # predict
     predictions = pipeline.predict(df)
     df_out = df.copy()
@@ -140,6 +141,7 @@ def get_batch_proba(
     df: pd.DataFrame,
     pipeline=None,
     model_path: Optional[str] = None,
+    meta_path: Optional[str] = None,
 ) -> tuple[pd.DataFrame, Dict]:
     """
     Predict probabilities for a batch DataFrame.
@@ -149,9 +151,9 @@ def get_batch_proba(
     Returns (df_out, meta) where df_out contains 'predicted_proba' and.
     """
     if pipeline is None:
-        pipeline, meta = load_model(model_path)
+        pipeline, meta = load_model(path=model_path, meta_path=meta_path)
     else:
-        _, meta = load_model(model_path) if model_path else ({}, {})
+        _, meta = load_model(path=model_path, meta_path=meta_path) if model_path else ({}, {})
     # predict probabilities
     predictions = pipeline.predict_proba(df)[:, 1]*100
     df_out = df.copy()

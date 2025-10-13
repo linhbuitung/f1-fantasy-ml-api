@@ -1,7 +1,11 @@
+import os
 from pathlib import Path
 from typing import Dict
 import pandas as pd
 from datetime import datetime
+
+project_root = Path(__file__).resolve().parents[2]  # repo root (.. / .. from this file)
+DATA_DIR = Path(os.environ.get("MODEL_DIR", str(project_root / "data")))
 
 def _load_csv(path: Path) -> pd.DataFrame:
     if not path.exists():
@@ -13,11 +17,10 @@ def build_main_race_features_from_dto(dto: Dict) -> Dict:
     Input: dict with keys matching PredictInput (driver, constructor, circuit, race_date (date), ...)
     Output: dict with full feature set expected by the pipeline (age_at_gp_in_days, driver_nationality, etc.)
     """
-    root = Path.cwd()
     # lookup tables (small)
-    drivers = _load_csv(root / "data" / "processed" / "drivers.csv")
-    constructors = _load_csv(root / "data" / "processed" / "constructors.csv")
-    circuits = _load_csv(root / "data" / "processed" / "circuits.csv")
+    drivers = _load_csv(DATA_DIR / "processed" / "drivers.csv")
+    constructors = _load_csv(DATA_DIR / "processed" / "constructors.csv")
+    circuits = _load_csv(DATA_DIR / "processed" / "circuits.csv")
 
     # canonical inputs
     driver_ref = str(dto.get("driver")).strip()
@@ -107,11 +110,10 @@ def build_qualifying_features_from_dto(dto: Dict) -> Dict:
     Input: dict with keys matching PredictInput (driver, constructor, circuit, race_date (date), ...)
     Output: dict with full feature set expected by the pipeline (age_at_gp_in_days, driver_nationality, etc.)
     """
-    root = Path.cwd()
     # lookup tables (small)
-    drivers = _load_csv(root / "data" / "processed" / "drivers.csv")
-    constructors = _load_csv(root / "data" / "processed" / "constructors.csv")
-    circuits = _load_csv(root / "data" / "processed" / "circuits.csv")
+    drivers = _load_csv(DATA_DIR / "processed" / "drivers.csv")
+    constructors = _load_csv(DATA_DIR / "processed" / "constructors.csv")
+    circuits = _load_csv(DATA_DIR / "processed" / "circuits.csv")
 
     # canonical inputs
     driver_ref = str(dto.get("driver")).strip()
@@ -198,11 +200,10 @@ def build_status_features_from_dto(dto: Dict) -> Dict:
     Input: dict with keys matching PredictInput (driver, constructor, circuit, race_date (date), ...)
     Output: dict with full feature set expected by the pipeline (age_at_gp_in_days, driver_nationality, etc.)
     """
-    root = Path.cwd()
     # lookup tables (small)
-    drivers = _load_csv(root / "data" / "processed" / "drivers.csv")
-    constructors = _load_csv(root / "data" / "processed" / "constructors.csv")
-    circuits = _load_csv(root / "data" / "processed" / "circuits.csv")
+    drivers = _load_csv(DATA_DIR / "processed" / "drivers.csv")
+    constructors = _load_csv(DATA_DIR / "processed" / "constructors.csv")
+    circuits = _load_csv(DATA_DIR / "processed" / "circuits.csv")
 
     # canonical inputs
     driver_ref = str(dto.get("driver")).strip()
