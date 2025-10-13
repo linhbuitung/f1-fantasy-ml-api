@@ -45,7 +45,7 @@ app.add_middleware(
 @app.middleware("http")
 async def verify_api_key(request: Request, call_next):
     # let health endpoint through without API key
-    if request.url.path == "/_health":
+    if request.url.path == "/health":
         return await call_next(request)
 
     # If API_KEY is set in environment, require matching header. If not set, allow requests (useful for dev).
