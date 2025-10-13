@@ -3,10 +3,8 @@ import pandas as pd
 from app.services.model_service import load_model, predict_df, get_proba_df
 
 def test_mainrace_model_load_and_predict_smoke():
-    # CI should dvc pull models/trained_pipeline.pkl, or run a tiny local test models
-    model_path = Path("models/trained_mainrace_pipeline.pkl")
-    assert model_path.exists(), "Model file missing (run dvc pull or train)"
-    pipeline, meta = load_model()
+
+    pipeline, meta = load_model(path="trained_mainrace_pipeline.pkl", meta_path="mainrace_metadata.json")
     # construct a minimal DF using columns mentioned in research/Thesis.ipynb defaults
     df = pd.DataFrame([{
         "qualification_position": 10,
@@ -31,10 +29,7 @@ def test_mainrace_model_load_and_predict_smoke():
     assert len(preds) == 1
 
 def test_qualifying_model_load_and_predict_smoke():
-    # CI should dvc pull models/trained_qualifying_pipeline.pkl or train locally
-    model_path = Path("models/trained_qualifying_pipeline.pkl")
-    assert model_path.exists(), "Model file missing (run dvc pull or train)"
-    pipeline, meta = load_model(path=model_path)
+    pipeline, meta = load_model(path="trained_qualifying_pipeline.pkl", meta_path="qualifying_metadata.json")
 
     df = pd.DataFrame([{
         "age_at_gp_in_days": 12000,
@@ -57,10 +52,8 @@ def test_qualifying_model_load_and_predict_smoke():
     assert len(preds) == 1
 
 def test_status_model_load_and_proba_smoke():
-    # CI should dvc pull models/trained_status_pipeline.pkl or train locally
-    model_path = Path("models/trained_status_pipeline.pkl")
-    assert model_path.exists(), "Model file missing (run dvc pull or train)"
-    pipeline, meta = load_model(path=model_path)
+
+    pipeline, meta = load_model(path="trained_status_pipeline.pkl", meta_path="status_metadata.json")
 
     df = pd.DataFrame([{
         "qualification_position": 12,
