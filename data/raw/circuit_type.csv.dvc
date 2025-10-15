@@ -1,0 +1,5 @@
+outs:
+- md5: 36be35ddef07ebfb149593052306bd22
+  size: 1811
+  hash: md5
+  path: circuit_type.csv

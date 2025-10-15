@@ -1,0 +1,5 @@
+outs:
+- md5: fed1176ab9132aa3ca91aff643deac9d
+  size: 20096
+  hash: md5
+  path: race_weather.csv
