@@ -1,5 +1,0 @@
-outs:
-- md5: 8dec18dd2fd2cc893ca01d10af84f722
-  size: 15761
-  hash: md5
-  path: race_weather.csv

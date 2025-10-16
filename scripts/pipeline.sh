@@ -15,6 +15,7 @@
 ## Optional cleanup
 #rm gcloud-key.json
 
+python scripts/extract_jolpica_dump.py
 python scripts/rebuild_processed_data.py
 python scripts/create_mainrace_training.py
 python scripts/create_qualifying_training.py
