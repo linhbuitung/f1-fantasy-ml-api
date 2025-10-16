@@ -130,10 +130,14 @@ def build_circuit_country_table(
         if not raw_path.is_absolute():
             raw_path = project_root / raw_path
 
+    circuit_type = pd.read_csv(project_root / "data" / "raw" / "circuit_type.csv")
+
     df = pd.read_csv(raw_path)
+    # merge with circuit_type by reference
+    df = pd.merge(df, circuit_type, how='left', left_on='reference', right_on='circuit', suffixes=('', '_circuit_type'))
 
     # take only driver_code and country_code columns
-    out = df[["country_code", "reference"]].drop_duplicates()
+    out = df[["country_code", "reference", "type_circuit"]].drop_duplicates()
     out = out.rename(columns={"country_code": "circuit_nationality", "reference": "circuitRef"})
 
     if save_to:
