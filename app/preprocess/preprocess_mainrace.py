@@ -8,7 +8,6 @@ from typing import Optional
 def serve_mainrace_df(
     raw_dir: Optional[str] = "data/raw",
     processed_dir: Optional[str] = "data/processed",
-    date_col: str = "date",
     year_from: int = 1981,
 ) -> pd.DataFrame:
     """
