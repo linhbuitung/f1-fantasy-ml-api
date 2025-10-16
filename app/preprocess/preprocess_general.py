@@ -17,7 +17,7 @@ def build_driver_country_table(
     Build and persist unique driver table with alpha-3 nationality.
     - If drivers_path is None, loads data/raw/jolpica-dump/formula_one_driver.csv.
     - Assumes the driver CSV has columns: reference (driverRef), country_code
-    - Saves to drivers.csv with columns: driverRef, driver_nationality
+    - Saves to drivers.csv with columns: driverRef, driver_nationality, driver_date_of_birth, first_race_date
     """
     project_root = Path(__file__).resolve().parents[2]
     # Resolve drivers CSV
@@ -29,19 +29,49 @@ def build_driver_country_table(
             raw_path = project_root / raw_path
 
     drivers = pd.read_csv(raw_path)
+    rounds = pd.read_csv(project_root / "data" / "raw" /"jolpica-dump" / "formula_one_round.csv")
+    round_entries = pd.read_csv(project_root / "data" / "raw" /"jolpica-dump" / "formula_one_roundentry.csv")
+    sessions = pd.read_csv(project_root / "data" / "raw" /"jolpica-dump" / "formula_one_session.csv")
+    session_entries = pd.read_csv(project_root / "data" / "raw" /"jolpica-dump" / "formula_one_sessionentry.csv")
+    team_drivers = pd.read_csv(project_root / "data" / "raw" /"jolpica-dump" / "formula_one_teamdriver.csv")
 
-    df = drivers
-    df.rename(columns={
+    df1 = pd.merge(rounds, sessions, how='left', left_on='id', right_on='round_id', suffixes=('_round', '_session'))
+    df2 = pd.merge(df1, round_entries, how='left', left_on='id_round', right_on='round_id',
+                   suffixes=('', '_round_entry'))
+    df2 = df2.rename(columns={'id': 'id_round_entry'})
+    df3 = pd.merge(df2, session_entries, how='left', left_on=['id_round_entry', 'id_session'],
+                   right_on=['round_entry_id', 'session_id'], suffixes=('', '_session_entry'))
+    df3 = df3.rename(columns={'id': 'id_session_entry'})
+    df4 = pd.merge(df3, team_drivers, how='left', left_on='team_driver_id', right_on='id',
+                   suffixes=('', '_team_driver'))
+    df4 = df4.rename(columns={'id': 'id_team_driver'})
+    df5 = pd.merge(df4, drivers, how='left', left_on='driver_id', right_on='id', suffixes=('', '_driver'))
+    df5 = df5.rename(columns={'id': 'id_driver'})
+
+    data = df5
+
+    # rename/normalize columns used in notebook
+    rename_map = {
+        'date_round': 'date',
         'country_code': 'driver_nationality',
+        'country_code_team': 'constructor_nationality',
+        'country_code_circuit': 'circuit_nationality',
+        'reference_team': 'constructor',
         'reference': 'driverRef',
         'date_of_birth': 'driver_date_of_birth',
-    }, inplace=True)
+    }
+    data = data.rename(columns={k: v for k, v in rename_map.items() if k in data.columns})
 
     # Specify the date format explicitly
-    df['driver_date_of_birth'] = pd.to_datetime(df['driver_date_of_birth'])
+    data['date'] = pd.to_datetime(data['date'])
+    data['driver_date_of_birth'] = pd.to_datetime(data['driver_date_of_birth'])
+
+    first_race_dates = data.groupby('driver_id')['date'].min().reset_index()
+    first_race_dates.rename(columns={'date': 'first_race_date'}, inplace=True)
+    data = data.merge(first_race_dates, on='driver_id', how='left')
 
     # take only driver_code, driver_date_of_birth and country_code columns
-    out = df [["driverRef",'driver_nationality', "driver_date_of_birth"]].drop_duplicates()
+    out = data [["driverRef",'driver_nationality', "driver_date_of_birth", 'first_race_date']].drop_duplicates()
 
     if save_to:
         save_path = Path(save_to)

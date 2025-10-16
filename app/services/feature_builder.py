@@ -56,7 +56,6 @@ def build_main_race_features_from_dto(dto: Dict) -> Dict:
             first_race_date = None
 
     days_since_first_race = (race_date - first_race_date).days if first_race_date is not None else None
-
     # constructor nationality
     cons_row = pd.DataFrame()
     if not constructors.empty:
