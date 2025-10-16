@@ -38,13 +38,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\processed\countries.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="\data\processed\drivers.csv">
           <value>
             <Attribute>
@@ -52,84 +45,133 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\processed\race_weather.csv">
+        <entry key="\data\raw\circuit_type.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\processed\races.csv">
+        <entry key="\data\raw\jolpica-dump\formula_one_baseteam.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\raw\circuits.csv">
+        <entry key="\data\raw\jolpica-dump\formula_one_championshipadjustment.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\raw\constructors.csv">
+        <entry key="\data\raw\jolpica-dump\formula_one_championshipsystem.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\raw\countries.csv">
+        <entry key="\data\raw\jolpica-dump\formula_one_circuit.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\raw\drivers.csv">
+        <entry key="\data\raw\jolpica-dump\formula_one_driver.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\raw\lap_times.csv">
+        <entry key="\data\raw\jolpica-dump\formula_one_driverchampionship.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\raw\qualifying.csv">
+        <entry key="\data\raw\jolpica-dump\formula_one_penalty.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\raw\races.csv">
+        <entry key="\data\raw\jolpica-dump\formula_one_pitstop.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\raw\results.csv">
+        <entry key="\data\raw\jolpica-dump\formula_one_pointsystem.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\raw\seasons.csv">
+        <entry key="\data\raw\jolpica-dump\formula_one_round.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\raw\status.csv">
+        <entry key="\data\raw\jolpica-dump\formula_one_roundentry.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\raw\jolpica-dump\formula_one_season.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\raw\jolpica-dump\formula_one_session.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\raw\jolpica-dump\formula_one_sessionentry.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\raw\jolpica-dump\formula_one_team.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\raw\jolpica-dump\formula_one_teamchampionship.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\raw\jolpica-dump\formula_one_teamdriver.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\raw\race_weather.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

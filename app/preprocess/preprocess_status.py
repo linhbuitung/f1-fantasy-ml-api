@@ -27,142 +27,126 @@ def serve_status_df(
     processed_base = Path(processed_dir) if processed_dir and Path(processed_dir).is_absolute() else (project_root / (processed_dir or "data" / "processed"))
 
     # load raw CSVs (fail early if missing)
-    races = pd.read_csv(processed_base / "races.csv")
-    results = pd.read_csv(raw_base / "results.csv")
-    drivers = pd.read_csv(raw_base / "drivers.csv")
-    constructors = pd.read_csv(raw_base / "constructors.csv")
-    circuits = pd.read_csv(raw_base / "circuits.csv")
-    status = pd.read_csv(raw_base / "status.csv")
+    rounds = pd.read_csv(raw_base / "jolpica-dump/formula_one_round.csv")
+    round_entries = pd.read_csv(raw_base / "jolpica-dump/formula_one_roundentry.csv")
+    sessions = pd.read_csv(raw_base / "jolpica-dump/formula_one_session.csv")
+    session_entries = pd.read_csv(raw_base / "jolpica-dump/formula_one_sessionentry.csv")
+    team_drivers = pd.read_csv(raw_base / "jolpica-dump/formula_one_teamdriver.csv")
+    drivers = pd.read_csv(raw_base / "jolpica-dump/formula_one_driver.csv")
+    teams = pd.read_csv(raw_base / "jolpica-dump/formula_one_team.csv")
+    circuits = pd.read_csv(raw_base / "jolpica-dump/formula_one_circuit.csv")
+    laps = pd.read_csv(raw_base / "jolpica-dump/formula_one_lap.csv")
 
-    countries = pd.read_csv(processed_base / "countries.csv")
+    race_weather = pd.read_csv(raw_base / "race_weather.csv")
+    circuit_type = pd.read_csv(raw_base / "circuit_type.csv")
 
     # Notebook merge order (same as Thesis.ipynb)
-    df1 = pd.merge(races, results, how="left", on=["raceId"], suffixes=("_race", "_result"))
-    df2 = pd.merge(df1, drivers, how="left", on=["driverId"], suffixes=("", "_driver"))
-    df3 = pd.merge(df2, constructors, how="left", on=["constructorId"], suffixes=("", "_constructor"))
-    df4 = pd.merge(df3, circuits, how="left", on=["circuitId"], suffixes=("", "_circuit"))
-    df5 = pd.merge(df4, status, how="left", on=["statusId"], suffixes=("", "_status"))
+    df1 = pd.merge(rounds, sessions, how='left', left_on='id', right_on='round_id', suffixes=('_round', '_session'))
+    df2 = pd.merge(df1, round_entries, how='left', left_on='id_round', right_on='round_id',
+                   suffixes=('', '_round_entry'))
+    df2 = df2.rename(columns={'id': 'id_round_entry'})
+    df3 = pd.merge(df2, session_entries, how='left', left_on=['id_round_entry', 'id_session'],
+                   right_on=['round_entry_id', 'session_id'], suffixes=('', '_session_entry'))
+    df3 = df3.rename(columns={'id': 'id_session_entry'})
+    df4 = pd.merge(df3, team_drivers, how='left', left_on='team_driver_id', right_on='id',
+                   suffixes=('', '_team_driver'))
+    df4 = df4.rename(columns={'id': 'id_team_driver'})
+    df5 = pd.merge(df4, drivers, how='left', left_on='driver_id', right_on='id', suffixes=('', '_driver'))
+    df5 = df5.rename(columns={'id': 'id_driver'})
+    df6 = pd.merge(df5, teams, how='left', left_on='team_id', right_on='id', suffixes=('', '_team'))
+    df6 = df6.rename(columns={'id': 'id_team'})
+    df7 = pd.merge(df6, circuits, how='left', left_on='circuit_id', right_on='id', suffixes=('', '_circuit'))
+    df7 = df7.rename(columns={'id': 'id_circuit'})
+    df8 = pd.merge(df7, laps, how='left', left_on='id_session_entry', right_on='session_entry_id',
+                   suffixes=('', '_lap'))
+    df8 = df8.rename(columns={'id': 'id_lap'})
 
-    data = df5.copy()
+    data = df8
 
-    data = data.drop(['raceId', 'round', 'circuitId', 'name', 'time_race', 'milliseconds',
-                      'url', 'fp1_date', 'fp1_time', 'fp2_date', 'fp2_time', 'fp3_date',
-                      'fp3_time', 'quali_date', 'quali_time', 'sprint_date', 'sprint_time',
-                      'resultId', 'constructorId', 'number', 'position',
-                      'positionText', 'positionOrder', 'points', 'time_result',
-                      'fastestLap', 'rank', 'fastestLapTime',
-                      'fastestLapSpeed', 'statusId', 'number_driver',
-                      'code', 'url_driver', 'name_circuit', 'name_constructor',
-                      'url_constructor', 'location', 'lat', 'lng', 'alt', 'url_circuit',
-                      'forename', 'surname', 'code'
-                      ], axis=1)
+    data = data.drop(['abbreviation', 'altitude', 'average_speed', 'base_team_id',
+                      'car_number', 'circuit_id', 'country', 'date_session', 'detail',
+                      'fastest_lap_rank', 'forename', 'id_circuit', 'id_round',
+                      'id_round_entry', 'id_session', 'id_session_entry', 'id_driver',
+                      'id_team', 'id_team_driver', 'id_lap', 'is_deleted',
+                      'is_eligible_for_points', 'is_entry_fastest_lap', 'laps_completed',
+                      'latitude', 'locality', 'longitude', 'name', 'name_team',
+                      'name_circuit', 'nationality', 'nationality_team', 'number',
+                      'number_round', 'number_session', 'permanent_car_number',
+                      'point_system_id', 'points' , 'position', 'position_lap',
+                      'race_number', 'role', 'round_entry_id', 'round_id',
+                      'round_id_round_entry', 'scheduled_laps', 'season_id',
+                      'season_id_team_driver', 'session_entry_id', 'session_id', 'status',
+                      'surname', 'team_driver_id', 'team_id', 'time', 'wikipedia',
+                      'wikipedia_circuit', 'wikipedia_driver', 'wikipedia_team',
+                      'time_lap' ,'time_session_entry' ],axis=1)
 
     # rename/normalize columns used in notebook
     rename_map = {
-        "name": "race_name",
-        "grid": "qualification_position",
-        "name_constructor": "constructor",
-        "nationality": "driver_nationality",
-        "nationality_constructor": "constructor_nationality",
-        "name_circuit": "circuit",
-        "country": "country_circuit",
-        "type": "type_circuit",
-        "dob": "driver_date_of_birth",
-        'circuitRef': 'circuit',
-        'constructorRef': 'constructor',
-        'driverRef': 'driver',
+        'date_round':'date',
+        'grid':'qualification_position',
+        'country_code':'driver_nationality',
+        'country_code_team':'constructor_nationality'
+        ,'country_code_circuit':'circuit_nationality',
+        'reference_team': 'constructor',
+        'reference': 'driver',
+        'reference_circuit': 'circuit',
+        'date_of_birth':'driver_date_of_birth'
     }
     data = data.rename(columns={k: v for k, v in rename_map.items() if k in data.columns})
 
-    # replace certain nationalities to match countries.csv
-    data['constructor_nationality'] = data['constructor_nationality'].str.strip()
-    data['constructor_nationality'] = data['constructor_nationality'].replace(
-        {'Rhodesian': 'Zimbabwean',
-        'American-Italian': 'American',
-         'Argentine-Italian': 'Argentine',
-         'East German': 'German',
-         'West German': 'German',
-         'Argentinian' : 'Argentine',})
+    # Take only  column 'type' of value 'R' as race
+    data = data[data['type'] == 'R']
+    # take only rows where 'is_cancelled_round', 'is_cancelled_session' are 'f'
+    data = data[(data['is_cancelled_round'] == 'f')]
+    data = data[(data['is_cancelled_session'] == 'f')]
 
-    data['driver_nationality'] = data['driver_nationality'].str.strip()
-    data['driver_nationality'] = data['driver_nationality'].replace(
-        {'Rhodesian': 'Zimbabwean',
-        'American-Italian': 'American',
-         'Argentine-Italian': 'Argentine',
-         'East German': 'German',
-         'West German': 'German',
-         'Argentinian' : 'Argentine',})
+    data.drop(['is_cancelled_round', 'is_cancelled_session', 'type'], axis=1, inplace=True)
 
+    # drop where is classified is null or nan
+    data = data[data['is_classified'].notna()]
+
+    # Specify the date format explicitly
+    data['date'] = pd.to_datetime(data['date'])
+    data['driver_date_of_birth'] = pd.to_datetime(data['driver_date_of_birth'])
+
+    # get month and day from date into new columns
+    data['race_month'] = data['date'].dt.month
+    data['race_day'] = data['date'].dt.day
+    data['race_year'] = data['date'].dt.year
 
     # driver DOB -> datetime
-    if "driver_date_of_birth" in data.columns:
-        data["driver_date_of_birth"] = pd.to_datetime(data["driver_date_of_birth"], errors="coerce")
+    data['age_at_gp_in_days'] = abs(data['driver_date_of_birth'] - data['date'])
+    data['age_at_gp_in_days'] = data['age_at_gp_in_days'].apply(lambda x: str(x).split(' ')[0]).astype(int)
 
-    # extract year/month/day
-    if date_col in data.columns:
-        data[date_col] = pd.to_datetime(data[date_col], errors="coerce")
-        data['race_month'] = data[date_col].dt.month
-        data['race_day'] = data[date_col].dt.day
-        data.rename(columns={'year': 'race_year'}, inplace=True)
-        data['race_year'] = pd.to_numeric(data['race_year'], errors='coerce').astype(int)
+    first_race_dates = data.groupby('driver_id')['date'].min().reset_index()
+    first_race_dates.rename(columns={'date': 'first_race_date'}, inplace=True)
+    data = data.merge(first_race_dates, on='driver_id', how='left')
+    data = data.drop(['driver_id'], axis=1)
 
-    # compute age and first race fields (notebook logic)
-    if "driver_date_of_birth" in data.columns and "date" in data.columns:
-        data["age_at_gp_in_days"] = (data["date"] - data["driver_date_of_birth"]).abs().dt.days.fillna(0).astype("Int64", copy=False)
+    data['days_since_first_race'] = abs(data['first_race_date'] - data['date'])
+    data['days_since_first_race'] = data['days_since_first_race'].apply(lambda x: str(x).split(' ')[0]).astype(int)
 
-    if "driverId" in data.columns:
-        first_race_dates = data.groupby("driverId")["date"].min().reset_index()
-        first_race_dates = first_race_dates.rename(columns={"date": "first_race_date"})
-        data = data.merge(first_race_dates, on="driverId", how="left")
-        data["days_since_first_race"] = (data["date"] - data["first_race_date"]).abs().dt.days.fillna(0).astype("Int64", copy=False)
+    # load race_weather csv, join by race date
+    race_weather['date'] = pd.to_datetime(race_weather['date'])
+    data = data.merge(race_weather, how='left', left_on='date', right_on='date', suffixes=('', '_race_weather'))
+    data = data[data['weather'].notna()]
 
-    data_tmp = data.copy()
+    # create a rain column where if the weather is 'Rain or 'Changeable' or 'Very changeable' then 1 else 0
+    data['rain'] = data['weather'].apply(lambda x: 1 if x in ['Rain', 'Changeable', 'Very changeable'] else 0)
+    # drop the weather column
+    data = data.drop(['weather'], axis=1)
 
-    data_with_circuit_nationality = data_tmp.merge(
-        countries,
-        how='left',
-        left_on='country_circuit',
-        right_on='en_short_name'
-    )
+    # Merge circuit type
+    data = data.merge(circuit_type, how='left', left_on='circuit', right_on='circuit', suffixes=('', '_circuit_type'))
 
-
-    data_with_circuit_nationality = data_with_circuit_nationality.drop(
-        ['country_circuit', 'num_code', 'alpha_2_code', 'en_short_name', 'nationality'], axis=1)
-    data_with_circuit_nationality.rename(columns={'alpha_3_code': 'circuit_nationality'}, inplace=True)
-
-    data_tmp = data_with_circuit_nationality.copy()
-
-    data_with_driver_nationality = data_tmp.merge(
-        countries,
-        how='left',
-        left_on='driver_nationality',
-        right_on='nationality'
-    )
-
-    data_with_driver_nationality = data_with_driver_nationality.drop(
-        ['driver_nationality', 'num_code', 'alpha_2_code', 'en_short_name', 'nationality'], axis=1)
-    data_with_driver_nationality.rename(columns={'alpha_3_code': 'driver_nationality'}, inplace=True)
-
-    data_tmp = data_with_driver_nationality.copy()
-
-    data_with_constructor_nationality = data_tmp.merge(
-        countries,
-        how='left',
-        left_on='constructor_nationality',
-        right_on='nationality'
-    )
-    data_with_constructor_nationality = data_with_constructor_nationality.drop(
-        ['constructor_nationality', 'num_code', 'alpha_2_code', 'en_short_name', 'nationality'], axis=1)
-    data_with_constructor_nationality.rename(columns={'alpha_3_code': 'constructor_nationality'}, inplace=True)
+    data = data[data['race_year'] >= year_from]
 
     # data after processing nationalities
-    data = data_with_constructor_nationality;
     data['driver_home'] = data['driver_nationality'] == data['circuit_nationality']
     data['constructor_home'] = data['constructor_nationality'] == data['circuit_nationality']
     data['driver_home'] = data['driver_home'].apply(lambda x: int(x))
     data['constructor_home'] = data['constructor_home'].apply(lambda x: int(x))
 
-    data = data[data['race_year'] >= year_from]
     # final housekeeping: drop exact duplicates and return
     data = data.drop_duplicates().reset_index(drop=True)
     return data
@@ -181,27 +165,19 @@ def create_status_training_datasets(
 
     data_cleaned_status = df.copy()
 
-    # drop duplicates
-    data_cleaned_status.drop_duplicates(inplace=True)
+    # dnf is 1 if is_classified is = 'f' else 0
+    data_cleaned_status['dnf'] = data_cleaned_status['is_classified'].apply(lambda x: 0 if x == 't' else 1)
+    cleaned = data_cleaned_status.drop(['is_classified'], axis=1)
 
-    pattern = r"\+.* Lap.*"
-    data_cleaned_status['dnf'] = data_cleaned_status['status'].apply(lambda x: 0 if x == 'Finished' or re.match(pattern, x) else 1)
-
-
-    # prepare cleaned (drop columns used for metrics, keep parity with other create_* funcs)
-    cols_to_drop = [
-        "driver_date_of_birth",
-        "first_race_date",
-        "date",
-        "laps",
-        "status",
-        "driverId",
-        "constructorId",
-        "final_position"
-        # keep domain specific columns as needed
-    ]
-    cleaned = data_cleaned_status.drop(columns=[c for c in cols_to_drop if c in data_cleaned_status.columns], errors="ignore").copy()
+    columns_to_drop = ['driver_date_of_birth', 'date', 'first_race_date']
+    cleaned = cleaned.drop(columns=[c for c in columns_to_drop if c in cleaned.columns], errors="ignore")
 
     cleaned.to_csv(out_dir_path / "cleaned_data_status.csv", index=False)
 
     return data_cleaned_status.reset_index(drop=True), cleaned.reset_index(drop=True)
+
+if __name__ == "__main__":
+    print("Building status data...")
+    df = serve_status_df()  # uses data/raw & data/processed defaults
+    data_median, cleaned = create_status_training_datasets(df=df)
+    print("Wrote:", Path("data/processed").resolve())

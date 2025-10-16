@@ -1,0 +1,12 @@
+md5: ad35b9a15f56b58a33d7165035b168cd
+frozen: true
+deps:
+- checksum: '"95fa2ae34d253f3c00d1042c8dec2d63"'
+  size: 6619294
+  hash: md5
+  path: https://api.jolpi.ca/data/dumps/download/delayed/?dump_type=csv
+outs:
+- md5: 95fa2ae34d253f3c00d1042c8dec2d63
+  size: 6619294
+  hash: md5
+  path: jolpica-dump.zip

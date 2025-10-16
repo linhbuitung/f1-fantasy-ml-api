@@ -206,3 +206,14 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 /credentials_1.json
+
+# extracted archive contents (derived)
+data/raw/jolpica-dump/
+data/raw/jolpica-dump.zip
+
+# virtualenv / python
+.venv/
+*.pyc
+
+# AutoGluon model artifacts (large, produced by training)
+models/autogluon_models/

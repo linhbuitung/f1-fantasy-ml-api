@@ -11,7 +11,7 @@ from pathlib import Path
 import pandas as pd
 
 if __name__ == "__main__":
-    path = Path("data/processed/cleaned_data_status.csv")
+    path = ROOT / "data" / "processed" / "cleaned_data_status.csv"
 
     Xy = pd.read_csv(path)
     y = Xy["dnf"]
