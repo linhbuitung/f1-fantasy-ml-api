@@ -14,7 +14,7 @@ def build_mainrace_pipeline(
 
     # sensible defaults matching research/Thesis.ipynb
     if numeric_cols is None:
-        numeric_cols = ["qualification_position", "age_at_gp_in_days", "days_since_first_race", "laps"]
+        numeric_cols = ["qualification_position", "age_at_gp_in_days", "days_since_first_race", "laps", "race_year"]
     if categorical_cols is None:
         categorical_cols = [
             "constructor",
@@ -24,9 +24,14 @@ def build_mainrace_pipeline(
             "circuit_nationality",
             "driver_nationality",
             "constructor_nationality",
+            "race_month",
+            "race_day",
+            "rain",
+            "driver_home",
+            "constructor_home"
         ]
     if passthrough_cols is None:
-        passthrough_cols = ["race_year", "race_month", "race_day", "rain", "driver_home", "constructor_home"]
+        passthrough_cols = []
 
     preprocessor = ColumnTransformer(
         transformers=[

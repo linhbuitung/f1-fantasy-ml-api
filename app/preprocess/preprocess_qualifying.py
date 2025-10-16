@@ -36,7 +36,6 @@ def serve_qualifying_df(
     circuits = pd.read_csv(raw_base / "jolpica-dump/formula_one_circuit.csv")
     laps = pd.read_csv(raw_base / "jolpica-dump/formula_one_lap.csv")
 
-    race_weather = pd.read_csv(raw_base / "race_weather.csv")
     circuit_type = pd.read_csv(raw_base / "circuit_type.csv")
 
     # Notebook merge order (same as Thesis-Qualifying.ipynb)
@@ -169,6 +168,13 @@ def create_qualifying_training_datasets(
     out_dir_path.mkdir(parents=True, exist_ok=True)
 
     data_cleaned_quali_time = df.copy()
+
+    columns_to_group = [col for col in data_cleaned_quali_time.columns if col != 'milliseconds_qualification']
+    data_cleaned_quali_time = data_cleaned_quali_time.groupby(columns_to_group, as_index=False).agg(
+        milliseconds_qualification=('milliseconds_qualification', 'min'),
+    )
+    # drop if milliseconds_qualification is 0
+    data_cleaned_quali_time = data_cleaned_quali_time[data_cleaned_quali_time['milliseconds_qualification'] != 0]
 
     # compute median qualification per (circuit, race_year, date)
     median_keys = [k for k in ("circuit", "race_year", "date") if k in data_cleaned_quali_time.columns]

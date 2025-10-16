@@ -28,11 +28,20 @@ def build_driver_country_table(
         if not raw_path.is_absolute():
             raw_path = project_root / raw_path
 
-    df = pd.read_csv(raw_path)
+    drivers = pd.read_csv(raw_path)
 
-    # take only driver_code and country_code columns
-    out = df [["country_code", "reference"]].drop_duplicates()
-    out = out.rename(columns={"country_code": "driver_nationality", "reference": "driverRef"})
+    df = drivers
+    df.rename(columns={
+        'country_code': 'driver_nationality',
+        'reference': 'driverRef',
+        'date_of_birth': 'driver_date_of_birth',
+    }, inplace=True)
+
+    # Specify the date format explicitly
+    df['driver_date_of_birth'] = pd.to_datetime(df['driver_date_of_birth'])
+
+    # take only driver_code, driver_date_of_birth and country_code columns
+    out = df [["driverRef",'driver_nationality', "driver_date_of_birth"]].drop_duplicates()
 
     if save_to:
         save_path = Path(save_to)

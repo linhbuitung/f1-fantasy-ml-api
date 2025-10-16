@@ -18,20 +18,20 @@ def test_build_features_from_dto_minimal(tmp_path, monkeypatch):
 
     # drivers.csv with driverRef, nationality and dob
     drivers_csv = data_proc / "drivers.csv"
-    drivers_content = "driver,driverRef,driver_date_of_birth,first_race_date,driver_nationality\n"
-    drivers_content += "1,hamilton,1985-01-07,2007-03-18,GBR\n"
+    drivers_content = "driverRefdriver_nationality\n"
+    drivers_content += "hamilton,GBR\n"
     _write_csv(drivers_csv, drivers_content)
 
     # constructors.csv
     constructors_csv = data_proc / "constructors.csv"
-    constructors_content = "constructor,constructorRef,constructor_nationality\n"
-    constructors_content += "Ferrari,ferrari,ITA\n"
+    constructors_content = "constructorRef,constructor_nationality\n"
+    constructors_content += "ferrari,ITA\n"
     _write_csv(constructors_csv, constructors_content)
 
     # circuits.csv
     circuits_csv = data_proc / "circuits.csv"
-    circuits_content = "circuit,circuitRef,circuit_nationality,type_circuit\n"
-    circuits_content += "silverstone,silverstone,GBR,Race circuit\n"
+    circuits_content = "circuitRef,circuit_nationality\n"
+    circuits_content += "silverstone,GBR\n"
     _write_csv(circuits_csv, circuits_content)
 
     # results.csv (empty header is fine)
