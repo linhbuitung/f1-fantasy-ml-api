@@ -4,6 +4,9 @@ import pandas as pd
 from typing import Optional
 import re
 
+from app.preprocess.preprocess_helper import export_unique_data
+
+
 def serve_status_df(
     raw_dir: Optional[str] = "data/raw",
     processed_dir: Optional[str] = "data/processed",
@@ -164,6 +167,8 @@ def create_status_training_datasets(
     out_dir_path.mkdir(parents=True, exist_ok=True)
 
     data_cleaned_status = df.copy()
+    # build feature data from helper
+    export_unique_data(data_cleaned_status, name_suffix="status")
 
     # dnf is 1 if is_classified is = 'f' else 0
     data_cleaned_status['dnf'] = data_cleaned_status['is_classified'].apply(lambda x: 0 if x == 't' else 1)

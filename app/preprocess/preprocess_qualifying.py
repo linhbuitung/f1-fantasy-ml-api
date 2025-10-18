@@ -4,6 +4,9 @@ import numpy as np
 import pandas as pd
 from typing import Optional
 
+from app.preprocess.preprocess_helper import export_unique_data
+
+
 def serve_qualifying_df(
     raw_dir: Optional[str] = "data/raw",
     processed_dir: Optional[str] = "data/processed",
@@ -168,6 +171,8 @@ def create_qualifying_training_datasets(
     out_dir_path.mkdir(parents=True, exist_ok=True)
 
     data_cleaned_quali_time = df.copy()
+    # build feature data from helper
+    export_unique_data(data_cleaned_quali_time, name_suffix="qualifying")
 
     columns_to_group = [col for col in data_cleaned_quali_time.columns if col != 'milliseconds_qualification']
     data_cleaned_quali_time = data_cleaned_quali_time.groupby(columns_to_group, as_index=False).agg(
