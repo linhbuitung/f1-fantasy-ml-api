@@ -5,6 +5,9 @@ import numpy as np
 import pandas as pd
 from typing import Optional
 
+from app.preprocess.preprocess_helper import export_unique_data
+
+
 def serve_mainrace_df(
     raw_dir: Optional[str] = "data/raw",
     processed_dir: Optional[str] = "data/processed",
@@ -166,6 +169,7 @@ def time_to_milliseconds(time_str):
     except Exception:
         return None
 
+
 def create_mainrace_training_datasets(
     df: pd.DataFrame,
     out_dir: str = "data/processed",
@@ -181,6 +185,9 @@ def create_mainrace_training_datasets(
     out_dir_path.mkdir(parents=True, exist_ok=True)
 
     data = df.copy()
+    
+    # build feature data from helper
+    export_unique_data(data, name_suffix="mainrace")
 
     # 1) Group by all columns except 'milliseconds_laptime' and aggregate
     cols_to_group = [c for c in data.columns if c != "milliseconds_laptime"]
