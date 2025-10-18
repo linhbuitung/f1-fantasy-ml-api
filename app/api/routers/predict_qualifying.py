@@ -5,6 +5,7 @@ from typing import List
 from fastapi import APIRouter
 from app.schemas.dto import QualifyingPredictInput, QualifyingPredictionItem, QualifyingPredictResponse
 from app.services.feature_builder import build_qualifying_features_from_dto
+from app.services.feature_service import read_options_csv
 from app.services.model_service import load_model, predict_df, predict_batch_and_rank
 import pandas as pd
 
@@ -66,3 +67,32 @@ def predict_batch(reqs: List[QualifyingPredictInput]):
         )
 
     return QualifyingPredictResponse(predictions=items, model_meta=meta)
+
+@router.get("/options/drivers")
+def get_driver_options():
+    """
+    Return driver pick list (records). Primary source:
+    data/processed/features_helper/drivers_qualifying.csv
+    Fallback: data/processed/drivers.csv
+    """
+    return read_options_csv("drivers_qualifying.csv", "drivers.csv")
+
+
+@router.get("/options/constructors")
+def get_constructor_options():
+    """
+    Return constructor pick list (records). Primary source:
+    data/processed/features_helper/constructors_qualifying.csv
+    Fallback: data/processed/constructors.csv
+    """
+    return read_options_csv("constructors_qualifying.csv", "constructors.csv")
+
+
+@router.get("/options/circuits")
+def get_circuit_options():
+    """
+    Return circuit pick list (records). Primary source:
+    data/processed/features_helper/circuits_qualifying.csv
+    Fallback: data/processed/circuits.csv
+    """
+    return read_options_csv("circuits_qualifying.csv", "circuits.csv")

@@ -5,6 +5,7 @@ from typing import List
 from fastapi import APIRouter
 from app.schemas.dto import MainRacePredictInput, MainRacePredictionItem, MainRacePredictResponse
 from app.services.feature_builder import build_main_race_features_from_dto
+from app.services.feature_service import read_options_csv
 from app.services.model_service import load_model, predict_df, predict_batch_and_rank
 import pandas as pd
 
@@ -66,3 +67,32 @@ def predict_batch(reqs: List[MainRacePredictInput]):
         )
 
     return MainRacePredictResponse(predictions=items, model_meta=meta)
+
+@router.get("/options/drivers")
+def get_driver_options():
+    """
+    Return driver pick list (records). Primary source:
+    data/processed/features_helper/drivers_mainrace.csv
+    Fallback: data/processed/drivers.csv
+    """
+    return read_options_csv("drivers_mainrace.csv", "drivers.csv")
+
+
+@router.get("/options/constructors")
+def get_constructor_options():
+    """
+    Return constructor pick list (records). Primary source:
+    data/processed/features_helper/constructors_mainrace.csv
+    Fallback: data/processed/constructors.csv
+    """
+    return read_options_csv("constructors_mainrace.csv", "constructors.csv")
+
+
+@router.get("/options/circuits")
+def get_circuit_options():
+    """
+    Return circuit pick list (records). Primary source:
+    data/processed/features_helper/circuits_mainrace.csv
+    Fallback: data/processed/circuits.csv
+    """
+    return read_options_csv("circuits_mainrace.csv", "circuits.csv")

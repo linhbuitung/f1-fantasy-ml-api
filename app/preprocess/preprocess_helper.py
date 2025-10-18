@@ -13,9 +13,16 @@ def export_unique_data(
     out_dir_path = Path(out_dir) if Path(out_dir).is_absolute() else project_root / out_dir
     out_dir_path.mkdir(parents=True, exist_ok=True)
 
-    # Drivers
-    drivers_out = df[["driver", "driver_nationality", "driver_date_of_birth", "first_race_date"]].drop_duplicates()
-    drivers_out = drivers_out.rename(columns={"driver": "driverRef"})
+    # get drivers from csv
+    processed_drivers_path = project_root / "data/processed/drivers.csv"
+    processed_drivers_df = pd.read_csv(processed_drivers_path)
+
+    drivers_out = df[["driver"]].drop_duplicates()
+    # merge with processed drivers
+    drivers_out = drivers_out.merge(processed_drivers_df, how="left", left_on="driver", right_on="driverRef", suffixes=('', '_proc'))
+    # drop driver column from processed
+    drivers_out = drivers_out.drop(columns=["driver"])
+
     drivers_out.to_csv(out_dir_path / f"drivers_{name_suffix}.csv", index=False)
 
     # Constructors

@@ -12,6 +12,18 @@ def _load_csv(path: Path) -> pd.DataFrame:
         return pd.DataFrame()
     return pd.read_csv(path, dtype=str)
 
+def validate_features_pickable(driver: str, constructor: str, circuit: str, type: str) -> bool:
+    drivers = _load_csv(DATA_DIR / "processed" / "features_helper" / f"drivers_{type}.csv")
+    constructors = _load_csv(DATA_DIR / "processed" / "features_helper" / f"constructors_{type}.csv")
+    circuits = _load_csv(DATA_DIR / "processed" / "features_helper" / f"circuits_{type}.csv")
+
+    driver_valid = not drivers.empty and (drivers.get("driverRef", "").fillna("").str.lower() == driver.lower()).any()
+    constructor_valid = not constructors.empty and (constructors.get("constructorRef", "").fillna("").str.lower() == constructor.lower()).any()
+    circuit_valid = not circuits.empty and (circuits.get("circuitRef", "").fillna("").str.lower() == circuit.lower()).any()
+
+    return driver_valid and constructor_valid and circuit_valid
+
+
 def build_main_race_features_from_dto(dto: Dict) -> Dict:
     """
     Input: dict with keys matching PredictInput (driver, constructor, circuit, race_date (date), ...)
@@ -28,7 +40,10 @@ def build_main_race_features_from_dto(dto: Dict) -> Dict:
     circuit_ref = str(dto.get("circuit")).strip()
     race_date = pd.to_datetime(dto.get("race_date"))
 
-    # look up driver row (try driverRef then forename+surname)
+    # validate pickable
+    if not validate_features_pickable(driver_ref, constructor_ref, circuit_ref, "mainrace"):
+        raise ValueError("One or more of driver, constructor, or circuit is not pickable data.")
+
     drv_row = pd.DataFrame()
     if not drivers.empty:
         drv_row = drivers[drivers.get("driverRef", "").fillna("").str.lower() == driver_ref.lower()]
@@ -111,6 +126,10 @@ def build_qualifying_features_from_dto(dto: Dict) -> Dict:
     constructor_ref = str(dto.get("constructor")).strip()
     circuit_ref = str(dto.get("circuit")).strip()
     race_date = pd.to_datetime(dto.get("race_date"))
+
+    # validate pickable
+    if not validate_features_pickable(driver_ref, constructor_ref, circuit_ref, "qualifying"):
+        raise ValueError("One or more of driver, constructor, or circuit is not pickable data.")
 
     # look up driver row (try driverRef then forename+surname)
     drv_row = pd.DataFrame()
@@ -201,6 +220,10 @@ def build_status_features_from_dto(dto: Dict) -> Dict:
     constructor_ref = str(dto.get("constructor")).strip()
     circuit_ref = str(dto.get("circuit")).strip()
     race_date = pd.to_datetime(dto.get("race_date"))
+
+    # validate pickable
+    if not validate_features_pickable(driver_ref, constructor_ref, circuit_ref, "status"):
+        raise ValueError("One or more of driver, constructor, or circuit is not pickable data.")
 
     # look up driver row (try driverRef then forename+surname)
     drv_row = pd.DataFrame()

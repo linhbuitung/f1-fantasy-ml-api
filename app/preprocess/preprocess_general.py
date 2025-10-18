@@ -72,7 +72,8 @@ def build_driver_country_table(
 
     # take only driver_code, driver_date_of_birth and country_code columns
     out = data [["driverRef",'driver_nationality', "driver_date_of_birth", 'first_race_date']].drop_duplicates()
-
+    # drop rows with null values
+    out = out.dropna()
     if save_to:
         save_path = Path(save_to)
         if not save_path.is_absolute():
@@ -104,7 +105,8 @@ def build_constructor_country_table(
     # take only driver_code and country_code columns
     out = df[["country_code", "reference"]].drop_duplicates()
     out = out.rename(columns={"country_code": "constructor_nationality", "reference": "constructorRef"})
-
+    # drop rows with null values
+    out = out.dropna()
     if save_to:
         save_path = Path(save_to)
         if not save_path.is_absolute():
@@ -139,7 +141,8 @@ def build_circuit_country_table(
     # take only driver_code and country_code columns
     out = df[["country_code", "reference", "type_circuit"]].drop_duplicates()
     out = out.rename(columns={"country_code": "circuit_nationality", "reference": "circuitRef"})
-
+    # drop rows with null values
+    out = out.dropna()
     if save_to:
         save_path = Path(save_to)
         if not save_path.is_absolute():
