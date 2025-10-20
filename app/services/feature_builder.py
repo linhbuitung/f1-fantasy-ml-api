@@ -163,23 +163,13 @@ def build_qualifying_features_from_dto(dto: Dict) -> Dict:
     # constructor nationality
     cons_row = pd.DataFrame()
     if not constructors.empty:
-        mask = (
-                       constructors.get("constructor", "").fillna("").str.lower() == constructor_ref.lower()
-               ) | (
-                       constructors.get("constructorRef", "").fillna("").str.lower() == constructor_ref.lower()
-               )
-        cons_row = constructors[mask]
+        cons_row = constructors[constructors.get("constructorRef", "").fillna("").str.lower() == constructor_ref.lower()]
     constructor_nationality = cons_row.iloc[0].get("constructor_nationality") if not cons_row.empty else None
 
     # circuit nationality / type: prefer circuits.name or circuitRef
     circ_row = pd.DataFrame()
     if not circuits.empty:
-        mask = (
-                       circuits.get("circuit", "").fillna("").str.lower() == circuit_ref.lower()
-               ) | (
-                       circuits.get("circuitRef", "").fillna("").str.lower() == circuit_ref.lower()
-               )
-        circ_row = circuits[mask]
+        circ_row = circuits[circuits.get("circuitRef", "").fillna("").str.lower() == circuit_ref.lower()]
     circuit_country = circ_row.iloc[0].get("circuit_nationality") if not circ_row.empty and "circuit_nationality" in circ_row.columns else None
     type_circuit = circ_row.iloc[0].get("type_circuit") if not circ_row.empty and "type_circuit" in circ_row.columns else None
 
@@ -257,23 +247,13 @@ def build_status_features_from_dto(dto: Dict) -> Dict:
     # constructor nationality
     cons_row = pd.DataFrame()
     if not constructors.empty:
-        mask = (
-                       constructors.get("constructor", "").fillna("").str.lower() == constructor_ref.lower()
-               ) | (
-                       constructors.get("constructorRef", "").fillna("").str.lower() == constructor_ref.lower()
-               )
-        cons_row = constructors[mask]
+        cons_row = constructors[constructors.get("constructorRef", "").fillna("").str.lower() == constructor_ref.lower()]
     constructor_nationality = cons_row.iloc[0].get("constructor_nationality") if not cons_row.empty else None
 
     # circuit nationality / type: prefer circuits.name or circuitRef
     circ_row = pd.DataFrame()
     if not circuits.empty:
-        mask = (
-                       circuits.get("circuit", "").fillna("").str.lower() == circuit_ref.lower()
-               ) | (
-                       circuits.get("circuitRef", "").fillna("").str.lower() == circuit_ref.lower()
-               )
-        circ_row = circuits[mask]
+        circ_row = circuits[circuits.get("circuitRef", "").fillna("").str.lower() == circuit_ref.lower()]
     circuit_country = circ_row.iloc[0].get("circuit_nationality") if not circ_row.empty and "circuit_nationality" in circ_row.columns else None
     type_circuit = circ_row.iloc[0].get("type_circuit") if not circ_row.empty and "type_circuit" in circ_row.columns else None
 
