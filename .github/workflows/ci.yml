@@ -27,7 +27,7 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Sync dependencies
-        run: uv sync --locked
+        run: uv sync
 
       - name: Configure GCP credentials
         env:
@@ -38,7 +38,7 @@ jobs:
         run: uv run dvc remote modify --local myremote credentialpath gcloud-key.json
 
       - name: Pull data with DVC
-        run: uv run dvc pull -v
+        run: uv run dvc pull
 
       - name: Run tests
         run: uv run pytest -q
