@@ -24,7 +24,8 @@ jobs:
       - name: Install Python deps
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install uv
+          uv sync --locked
           pip install "dvc[gs]" gcsfs
 
       - name: Configure GCP credentials
@@ -35,10 +36,10 @@ jobs:
 
       - name: Modify DVC Remote
         run: |
-          dvc remote modify --local myremote credentialpath gcloud-key.json
+          uv run dvc remote modify --local myremote credentialpath gcloud-key.json
 
       - name: DVC pull data
-        run: dvc pull -v
+        run: uv run dvc pull -v
 
       - name: Run tests
-        run: pytest -q
+        run: uv venv exec pytest -q

@@ -217,4 +217,3 @@ data/raw/jolpica-dump.zip
 # AutoGluon model artifacts (large, produced by training)
 models/autogluon_models/
 /gcloud-key.json
-/credentials_1.json
