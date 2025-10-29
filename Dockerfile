@@ -1,19 +1,21 @@
-FROM python:3.12-slim
+FROM python:3.11-slim
 ENV PORT=8080
 
 WORKDIR /app
 
-COPY ./requirements.txt /app/requirements.txt
-
 RUN python -m pip install --upgrade pip
-RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install uv
 
+# Copy project files
+COPY pyproject.toml uv.lock /app/
 COPY ./app /app/app
 COPY ./models /app/models
 COPY ./data /app/data
 COPY ./scripts /app/scripts
-
 COPY .dvc /app/.dvc
 COPY dvc.lock /app/dvc.lock
 
-CMD ["python", "-m" , "app.main"]
+# Sync dependencies (locked)
+RUN uv sync --no-dev
+
+CMD ["uv", "run", "python", "-m", "app.main"]

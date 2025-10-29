@@ -205,7 +205,6 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-/credentials_1.json
 
 # extracted archive contents (derived)
 data/raw/jolpica-dump/
@@ -217,3 +216,4 @@ data/raw/jolpica-dump.zip
 
 # AutoGluon model artifacts (large, produced by training)
 models/autogluon_models/
+/gcloud-key.json
