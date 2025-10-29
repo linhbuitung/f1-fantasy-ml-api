@@ -8,9 +8,9 @@ def dvc_pull_with_gcp_key():
         key_path = '/tmp/gcloud-key.json'
         with open(key_path, 'wb') as f:
             f.write(base64.b64decode(key_b64))
-        subprocess.run(['dvc', 'config', 'core.no_scm', 'true'], check=True)
-        subprocess.run(['dvc', 'remote', 'modify', '--local', 'myremote', 'credentialpath', key_path], check=True)
-        subprocess.run(['dvc', 'pull', '-v'], check=True)
+        subprocess.run(['uv', 'run', 'dvc', 'config', 'core.no_scm', 'true'], check=True)
+        subprocess.run(['uv', 'run', 'dvc', 'remote', 'modify', '--local', 'myremote', 'credentialpath', key_path], check=True)
+        subprocess.run(['uv', 'run', 'dvc', 'pull'], check=True)
         os.remove(key_path)
     else:
         print('GCP_SA_KEY_B64 not provided; skipping dvc pull')

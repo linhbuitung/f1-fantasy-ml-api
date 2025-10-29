@@ -14,7 +14,7 @@ COPY ./data /app/data
 COPY ./scripts /app/scripts
 
 # Sync dependencies (locked)
-RUN uv sync --locked
+RUN uv sync --no-dev
 
 COPY .dvc /app/.dvc
 COPY dvc.lock /app/dvc.lock
